@@ -19,11 +19,12 @@ async function cargarPost(){
 }
 async function cargarComentarios(postId){
   const cont = document.getElementById('commentsList'); cont.textContent='Cargando…';
-  const { data, error } = await supabase.from('comentarios').select('id,texto,created_at,user_id,profiles ( nombre, email )').eq('post_id', postId).order('created_at',{ascending:false});
+  const { data: { session } } = await supabase.auth.getSession();
+  const { data, error } = await supabase.from('comentarios').select('id,texto,created_at,user_id').eq('post_id', postId).order('created_at',{ascending:false});
   if (error){ cont.textContent='No se pudieron cargar comentarios.'; return; }
   cont.innerHTML=''; (data||[]).forEach(cm=>{ const el = document.createElement('div'); el.className='comentario';
-    const autor = cm.profiles?.nombre || cm.profiles?.email || 'Usuario'; const fecha = new Date(cm.created_at).toLocaleString('es-ES');
-    el.innerHTML = `<p class="link-sutil">${autor} — ${fecha}</p><p>${escapeHtml(cm.texto)}</p>`; cont.appendChild(el); });
+    const autor = (session && cm.user_id === session.user.id) ? 'Tú' : 'Usuario'; const fecha = new Date(cm.created_at).toLocaleString('es-ES');
+    el.innerHTML = `<p class=\"link-sutil\">${autor} — ${fecha}</p><p>${escapeHtml(cm.texto)}</p>`; cont.appendChild(el); });
   if (!data || data.length===0){ const p=document.createElement('p'); p.className='link-sutil'; p.textContent='Sé el primero en comentar.'; cont.appendChild(p); }
 }
 function prepararFormulario(postId){
