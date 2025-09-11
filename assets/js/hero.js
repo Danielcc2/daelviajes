@@ -71,7 +71,7 @@ async function initHero(){
     try{
       const url = new URL(window.location.href); const slug = url.searchParams.get('slug');
       if (slug){
-        let { data: post, error } = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub,portada_y,publicado').eq('slug', slug).eq('publicado', true).single();
+        let { data: post, error } = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub,portada_y,portada_x,publicado').eq('slug', slug).eq('publicado', true).single();
         if (error && !post){ const res = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub').eq('slug', slug).single(); post = res.data; }
         if (post){
           const h1 = hero.querySelector('.hero-content h1'); const sub = hero.querySelector('.hero-content .subtitle'); const desc = hero.querySelector('.hero-content .description');
@@ -82,7 +82,8 @@ async function initHero(){
           const actions = hero.querySelector('.hero-actions'); if (actions) actions.remove();
           // Posición de portada
           const py = (typeof post.portada_y === 'number') ? post.portada_y : 50;
-          bg.style.backgroundPosition = `center ${py}%`;
+          const px = (typeof post.portada_x === 'number') ? post.portada_x : 50;
+          bg.style.backgroundPosition = `${px}% ${py}%`;
         }
       }
     }catch(_){ }

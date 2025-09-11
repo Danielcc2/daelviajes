@@ -91,7 +91,7 @@ export async function listarItinerariosPublicos(){
   const cont = document.getElementById('listaItinerarios');
   const { data } = await supabase.from('itinerarios_publicos').select('titulo,resumen,slug').order('fecha_pub',{ascending:false});
   cont.innerHTML=''; (data||[]).forEach(p=>{ const el=document.createElement('article'); el.className='tarjeta-articulo';
-    el.innerHTML=`<div class="contenido-tarjeta"><h3><a href="../post.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p></div>`; cont.appendChild(el); });
+    el.innerHTML=`<div class="contenido-tarjeta"><h3><a href="itinerario.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p></div>`; cont.appendChild(el); });
 }
 
 function extraerPrimeraImagen(md=''){

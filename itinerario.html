@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <title>Itinerarios — DAEL Viajes</title>
+  <title>Itinerario — DAEL Viajes</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark only" />
   <link rel="preload" href="assets/css/estilos.css" as="style">
   <link rel="stylesheet" href="assets/css/estilos.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module" src="assets/js/itinerario.js"></script>
   <script type="module" src="assets/js/main.js" defer></script>
   <script type="module" src="assets/js/auth.js" defer></script>
-
 </head>
 <body>
   <header class="header-principal">
@@ -45,18 +46,14 @@
     </nav>
   </header>
 
-<main class="contenedor">
-  <h1>Itinerarios</h1>
-  <section class="panel">
-    <h2>Itinerarios públicos</h2>
-    <div id="listaItinerarios" class="grid-articulos"></div>
-  </section>
-  <section class="panel" id="misItisPanel" hidden>
-    <h2>Mis itinerarios</h2>
-    <div id="misItinerariosResumen" class="grid-articulos"></div>
-    <p class="centrado"><a class="btn btn-primario" href="usuario/mis-itinerarios.html">Crear / gestionar mis itinerarios</a></p>
-  </section>
-</main>
+  <main class="contenedor">
+    <article class="panel">
+      <p class="categoria" id="itCat"></p>
+      <h1 id="itTitulo">Cargando…</h1>
+      <p id="itMeta" class="link-sutil"></p>
+      <div id="itContent" class="post-content"></div>
+    </article>
+  </main>
   <footer class="footer">
     <div class="contenedor footer-contenido">
       <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
@@ -70,11 +67,5 @@
     </div>
   </footer>
   <script src="assets/js/cookies.js" defer></script>
-
-<script type="module">
-  import { listarItinerariosPublicos, listarMisItinerariosResumen } from './assets/js/user.js';
-  listarItinerariosPublicos();
-  listarMisItinerariosResumen();
-</script>
 </body>
 </html>
