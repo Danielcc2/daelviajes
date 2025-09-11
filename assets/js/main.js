@@ -1,5 +1,14 @@
 import './editmode.js';
 import { supabase } from '../../config/supabase.js';
+function getSiteBase(){
+  try {
+    const logo = document.querySelector('a.logo-link');
+    if (logo){ const abs = new URL(logo.getAttribute('href')||'index.html', window.location.href); return abs.href.replace(/index\.html(?:[?#].*)?$/, ''); }
+  } catch(_) {}
+  const path = window.location.pathname;
+  const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, '');
+  return new URL(dir, window.location.origin).href;
+}
 // Menú móvil
 const btnHam = document.getElementById('btnHamburguer');
 const menuMovil = document.getElementById('menu-movil');
@@ -12,7 +21,7 @@ if (btnHam && menuMovil){
 }
 // Salir
 const btnSalir = document.getElementById('btnSalir');
-if (btnSalir){ btnSalir.addEventListener('click', async (e)=>{ e.preventDefault(); await supabase.auth.signOut(); location.href='index.html'; }); }
+if (btnSalir){ btnSalir.addEventListener('click', async (e)=>{ e.preventDefault(); await supabase.auth.signOut(); location.href = getSiteBase() + 'index.html'; }); }
 
 export async function cargarUltimosArticulos(){
   const ul = document.getElementById('listUltimos'); if (!ul) return;

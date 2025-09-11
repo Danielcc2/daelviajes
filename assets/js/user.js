@@ -1,6 +1,15 @@
 import { supabase } from '../../config/supabase.js';
+function getSiteBase(){
+  try {
+    const logo = document.querySelector('a.logo-link');
+    if (logo){ const abs = new URL(logo.getAttribute('href')||'../index.html', window.location.href); return abs.href.replace(/index\.html(?:[?#].*)?$/, ''); }
+  } catch(_) {}
+  const path = window.location.pathname;
+  const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, '');
+  return new URL(dir, window.location.origin).href;
+}
 export async function inicializarPerfil(){
-  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='index.html'; return; }
+  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href = getSiteBase() + 'usuario/login.html'; return; }
   // Formulario de perfil: nombre y avatar
   const formPerfil = document.getElementById('formPerfil');
   const msgPerfil = document.getElementById('msgPerfil');
@@ -38,7 +47,7 @@ export async function inicializarPerfil(){
   }
 }
 export async function gestionarItinerarios(){
-  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='index.html'; return; }
+  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href = getSiteBase() + 'usuario/login.html'; return; }
   const lista = document.getElementById('misItinerarios'); const form = document.getElementById('formItinerario'); const msg = document.getElementById('msgItin');
   async function cargar(){ const { data } = await supabase.from('itinerarios_usuario').select('id,titulo,contenido,updated_at').order('updated_at',{ascending:false});
     lista.innerHTML='';
