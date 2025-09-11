@@ -23,14 +23,23 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
   const { data } = await supabase.auth.getSession();
   const navCuenta = document.getElementById('navCuenta');
   if (navCuenta){
-    if (data?.session){ navCuenta.textContent = data.session.user.email.split('@')[0]; }
-    else { navCuenta.textContent = 'Iniciar sesión'; navCuenta.href = 'index.html#login'; }
-  }
-  // Ocultar el bloque de autenticación en la home si ya hay sesión
-  const bloqueAuth = document.getElementById('bloqueAuth');
-  if (bloqueAuth){
-    if (data?.session){ bloqueAuth.setAttribute('hidden',''); }
-    else { bloqueAuth.removeAttribute('hidden'); }
+    if (data?.session){
+      navCuenta.textContent = data.session.user.email.split('@')[0];
+      navCuenta.href = 'usuario/perfil.html';
+      // Si existe un enlace de registro añadido dinámicamente, lo ocultamos
+      const reg = document.getElementById('navRegistro'); if (reg) reg.remove();
+    } else {
+      navCuenta.textContent = 'Iniciar sesión';
+      navCuenta.href = 'usuario/login.html';
+      // Añadir enlace de registro junto al botón de cuenta
+      const li = navCuenta.closest('li');
+      if (li && !document.getElementById('navRegistro')){
+        const regLi = document.createElement('li');
+        const a = document.createElement('a'); a.id = 'navRegistro'; a.href = 'usuario/registro.html'; a.textContent = 'Crear cuenta';
+        regLi.appendChild(a);
+        li.parentElement?.insertBefore(regLi, li.nextSibling);
+      }
+    }
   }
 })();
 const btnRec = document.getElementById('btnRecuperar');

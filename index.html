@@ -65,33 +65,6 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="contenedor hero-contenido">
-        <h1 id="home-hero-title" data-editable>Planifica tu próximo viaje con <span class="resaltado">confianza total</span></h1>
-        <p id="home-hero-sub" data-editable>Guías actualizadas, itinerarios listos y reseñas claras para viajar mejor.</p>
-        <div class="auth-form" id="bloqueAuth">
-          <div class="auth-tabs" role="tablist">
-            <button id="tabLogin" class="tab activo">Iniciar sesión</button>
-            <button id="tabReg" class="tab">Crear cuenta</button>
-          </div>
-          <form id="formLogin" class="form-auth" autocomplete="on">
-            <label class="sr-only" for="loginEmail">Email</label>
-            <input id="loginEmail" name="email" type="email" placeholder="tú@correo.com" required />
-            <label class="sr-only" for="loginPass">Contraseña</label>
-            <input id="loginPass" name="password" type="password" placeholder="••••••••" minlength="6" required />
-            <button class="btn btn-primario" type="submit">Entrar</button>
-            <button id="btnRecuperar" class="btn btn-link" type="button">¿Olvidaste tu contraseña?</button>
-            <div id="msgLogin" class="msg"></div>
-          </form>
-          <form id="formRegistro" class="form-auth oculto" autocomplete="on">
-            <input name="email" type="email" placeholder="tú@correo.com" required />
-            <input name="password" type="password" placeholder="Crea una contraseña" minlength="6" required />
-            <button class="btn btn-primario" type="submit">Crear cuenta</button>
-            <div id="msgRegistro" class="msg"></div>
-          </form>
-        </div>
-      </div>
-    </section>
     <section class="ultimos-articulos contenedor">
       <h2>Últimos artículos</h2>
       <div id="listUltimos" class="grid-articulos" aria-live="polite"></div>

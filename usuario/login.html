@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Iniciar sesión — DAEL Viajes</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark only" />
+  <link rel="preload" href="../assets/css/estilos.css" as="style">
+  <link rel="stylesheet" href="../assets/css/estilos.css" />
+  <script type="module" src="../assets/js/main.js" defer></script>
+  <script type="module" src="../assets/js/auth.js" defer></script>
+</head>
+<body>
+  <header class="header-principal">
+    <div class="contenedor header-contenido">
+      <a class="logo-link" href="../index.html" aria-label="Ir al inicio">
+        <img src="../assets/images/logo.svg" alt="DAEL Viajes" class="logo" />
+      </a>
+      <nav class="nav-principal" aria-label="Principal">
+        <ul>
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../itinerarios.html">Itinerarios</a></li>
+          <li class="nav-cta"><a href="login.html" id="navCuenta">Iniciar sesión</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Inicia sesión</h1>
+    <form id="formLogin" class="form-auth ancho" autocomplete="on">
+      <label class="sr-only" for="loginEmail">Email</label>
+      <input id="loginEmail" name="email" type="email" placeholder="tú@correo.com" required />
+      <label class="sr-only" for="loginPass">Contraseña</label>
+      <input id="loginPass" name="password" type="password" placeholder="••••••••" minlength="6" required />
+      <button class="btn btn-primario" type="submit">Entrar</button>
+      <button id="btnRecuperar" class="btn btn-link" type="button">¿Olvidaste tu contraseña?</button>
+      <div id="msgLogin" class="msg"></div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor footer-contenido">
+      <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
+      <nav class="nav-secundario" aria-label="Secundario">
+        <a href="../sobre.html">Sobre mí</a>
+        <a href="../contacto.html">Contacto</a>
+        <a href="../privacidad.html">Privacidad</a>
+        <a href="../cookies.html">Cookies</a>
+        <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/js/cookies.js" defer></script>
+</body>
+</html>
