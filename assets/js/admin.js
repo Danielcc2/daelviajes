@@ -55,6 +55,8 @@ export async function gestionarPosts(){ await requerirAdmin();
   const portadaUrl = document.getElementById('portadaUrl');
   const portadaPreview = document.getElementById('portadaPreview');
   const portadaFondo = document.getElementById('portadaFondo');
+  const portadaPosRange = document.getElementById('portadaPos');
+  const portadaPosVal = document.getElementById('portadaPosVal');
   function slugify(t=''){ return (t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
   function storagePathFromPublicUrl(url=''){ const m = url.match(/\/storage\/v1\/object\/public\/imagenes-posts\/(.*)$/); return m ? m[1] : ''; }
   function escapeRegExp(s=''){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -82,7 +84,11 @@ export async function gestionarPosts(){ await requerirAdmin();
       const url = data?.publicUrl;
       if (!url){ portadaMsg.textContent='No se pudo obtener URL.'; portadaMsg.className='msg error'; return; }
       portadaUrl.value = url;
-      if (portadaPreview && portadaFondo){ portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${url})`; }
+      if (portadaPreview && portadaFondo){
+        portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${url})`;
+        const pos = (portadaPosRange && portadaPosRange.value) ? portadaPosRange.value : 50;
+        portadaFondo.style.backgroundPosition = `center ${pos}%`;
+      }
       portadaMsg.textContent='Portada lista.'; portadaMsg.className='msg ok';
     });
   }
@@ -124,7 +130,7 @@ export async function gestionarPosts(){ await requerirAdmin();
       row.innerHTML = `${p.titulo} — ${p.categoria} — ${p.publicado ? 'Sí':'No'} <button class="btn btn-link" data-edit="${p.id}">Editar</button> <button class="btn btn-link" data-del="${p.id}">Eliminar</button>`; tabla.appendChild(row); });
     tabla.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', async ()=>{ await supabase.from('posts').delete().eq('id', b.dataset.del); cargar(); }));
     tabla.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', async ()=>{
-      const { data: p } = await supabase.from('posts').select('id,titulo,resumen,contenido,categoria,portada_url,publicado,slug').eq('id', b.dataset.edit).single();
+      const { data: p } = await supabase.from('posts').select('id,titulo,resumen,contenido,categoria,portada_url,portada_y,publicado,slug').eq('id', b.dataset.edit).single();
       if (!p) return;
       if (postIdInput) postIdInput.value = p.id;
       form.titulo.value = p.titulo || '';
@@ -133,7 +139,13 @@ export async function gestionarPosts(){ await requerirAdmin();
       form.contenido.value = p.contenido || '';
       if (editor){ editor.setMarkdown(form.contenido.value||''); }
       portadaUrl.value = p.portada_url || '';
-      if (p.portada_url && portadaPreview && portadaFondo){ portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${p.portada_url})`; } else if (portadaPreview){ portadaPreview.style.display='none'; }
+      if (p.portada_url && portadaPreview && portadaFondo){
+        portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${p.portada_url})`;
+        const pos = (typeof p.portada_y === 'number') ? p.portada_y : 50;
+        if (portadaPosRange) portadaPosRange.value = pos;
+        if (portadaPosVal) portadaPosVal.textContent = pos+"%";
+        portadaFondo.style.backgroundPosition = `center ${pos}%`;
+      } else if (portadaPreview){ portadaPreview.style.display='none'; }
       if (btnGuardar) btnGuardar.textContent = 'Guardar cambios';
       if (btnCancelarEd) btnCancelarEd.style.display = 'inline-block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -148,12 +160,14 @@ export async function gestionarPosts(){ await requerirAdmin();
     let error;
     if (editingId){
       delete payload.id;
+      payload.portada_y = portadaPosRange ? parseInt(portadaPosRange.value || '50', 10) : 50;
       const res = await supabase.from('posts').update(payload).eq('id', editingId);
       error = res.error;
     } else {
       payload.publicado = true; payload.slug = (payload.titulo||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
       payload.fecha_pub = new Date().toISOString();
       if (!payload.portada_url){ const m = (payload.contenido||'').match(/!\[[^\]]*\]\(([^)]+)\)/); if (m) payload.portada_url = m[1]; }
+      payload.portada_y = portadaPosRange ? parseInt(portadaPosRange.value || '50', 10) : 50;
       const res = await supabase.from('posts').insert(payload);
       error = res.error;
     }
@@ -198,3 +212,21 @@ export async function listarUsuarios(){ await requerirAdmin();
     const list = document.getElementById('imgsPostList'); if (list){ list.innerHTML=''; }
   });}
 })();
+
+// Drag para ajustar posición de portada
+document.addEventListener('DOMContentLoaded', ()=>{
+  const fondo = document.getElementById('portadaFondo');
+  const range = document.getElementById('portadaPos');
+  const out = document.getElementById('portadaPosVal');
+  if (!fondo || !range) return;
+  fondo.style.cursor = 'grab';
+  const setPos = (pct)=>{ pct = Math.min(100, Math.max(0, Math.round(pct))); range.value = pct; if (out) out.textContent = pct+"%"; fondo.style.backgroundPosition = `center ${pct}%`; };
+  range.addEventListener('input', ()=> setPos(range.value));
+  let dragging = false;
+  const onMove = (e)=>{
+    if (!dragging) return; const rect = fondo.getBoundingClientRect(); const y = (e.clientY - rect.top) / rect.height * 100; setPos(y);
+  };
+  fondo.addEventListener('mousedown', (e)=>{ dragging = true; fondo.style.cursor='grabbing'; onMove(e); });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', ()=>{ dragging=false; fondo.style.cursor='grab'; });
+});

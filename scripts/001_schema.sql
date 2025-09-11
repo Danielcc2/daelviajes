@@ -44,6 +44,7 @@ create table if not exists public.posts (
 );
 -- campo opcional de portada
 alter table public.posts add column if not exists portada_url text;
+alter table public.posts add column if not exists portada_y int check (portada_y >= 0 and portada_y <= 100) default 50;
 alter table public.posts enable row level security;
 drop policy if exists posts_select_publicados on public.posts;
 create policy posts_select_publicados on public.posts for select using (publicado = true);

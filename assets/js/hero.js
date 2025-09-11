@@ -71,15 +71,18 @@ async function initHero(){
     try{
       const url = new URL(window.location.href); const slug = url.searchParams.get('slug');
       if (slug){
-        let { data: post, error } = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub,publicado').eq('slug', slug).eq('publicado', true).single();
+        let { data: post, error } = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub,portada_y,publicado').eq('slug', slug).eq('publicado', true).single();
         if (error && !post){ const res = await supabase.from('posts').select('titulo,resumen,categoria,fecha_pub').eq('slug', slug).single(); post = res.data; }
         if (post){
           const h1 = hero.querySelector('.hero-content h1'); const sub = hero.querySelector('.hero-content .subtitle'); const desc = hero.querySelector('.hero-content .description');
           if (h1) h1.textContent = post.titulo || '';
-          const fecha = post.fecha_pub ? new Date(post.fecha_pub).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) : '';
-          if (sub) sub.innerHTML = `<em>${post.categoria || ''}${fecha ? ' — '+fecha : ''}</em>`;
+          // Eliminar subtítulo para posts
+          if (sub) sub.remove();
           if (desc) desc.textContent = post.resumen || '';
           const actions = hero.querySelector('.hero-actions'); if (actions) actions.remove();
+          // Posición de portada
+          const py = (typeof post.portada_y === 'number') ? post.portada_y : 50;
+          bg.style.backgroundPosition = `center ${py}%`;
         }
       }
     }catch(_){ }
