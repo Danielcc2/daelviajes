@@ -1,4 +1,13 @@
 import { supabase } from '../../config/supabase.js';
+function getSiteBase(){
+  try {
+    const logo = document.querySelector('a.logo-link');
+    if (logo){ const abs = new URL(logo.getAttribute('href')||'index.html', window.location.href); return abs.href.replace(/index\.html(?:[?#].*)?$/, ''); }
+  } catch(_) {}
+  const path = window.location.pathname;
+  const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, '');
+  return new URL(dir, window.location.origin).href;
+}
 const tabLogin = document.getElementById('tabLogin'); const tabReg = document.getElementById('tabReg');
 const formLogin = document.getElementById('formLogin'); const formRegistro = document.getElementById('formRegistro');
 if (tabLogin && tabReg && formLogin && formRegistro){
@@ -25,17 +34,17 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
   if (navCuenta){
     if (data?.session){
       navCuenta.textContent = data.session.user.email.split('@')[0];
-      navCuenta.href = 'usuario/perfil.html';
+      navCuenta.href = getSiteBase() + 'usuario/perfil.html';
       // Si existe un enlace de registro añadido dinámicamente, lo ocultamos
       const reg = document.getElementById('navRegistro'); if (reg) reg.remove();
     } else {
       navCuenta.textContent = 'Iniciar sesión';
-      navCuenta.href = 'usuario/login.html';
+      navCuenta.href = getSiteBase() + 'usuario/login.html';
       // Añadir enlace de registro junto al botón de cuenta
       const li = navCuenta.closest('li');
       if (li && !document.getElementById('navRegistro')){
         const regLi = document.createElement('li');
-        const a = document.createElement('a'); a.id = 'navRegistro'; a.href = 'usuario/registro.html'; a.textContent = 'Crear cuenta';
+        const a = document.createElement('a'); a.id = 'navRegistro'; a.href = getSiteBase() + 'usuario/registro.html'; a.textContent = 'Crear cuenta';
         regLi.appendChild(a);
         li.parentElement?.insertBefore(regLi, li.nextSibling);
       }
@@ -47,7 +56,7 @@ if (btnRec){
   btnRec.addEventListener('click', async () => {
     const email = (document.getElementById('loginEmail') || {}).value;
     if (!email) return alert('Escribe tu email.');
-    const redirectTo = new URL('usuario/perfil.html', window.location.href).toString();
+    const redirectTo = getSiteBase() + 'usuario/perfil.html';
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
     if (error) alert(error.message); else alert('Te enviamos un enlace para restablecer.');
   });
