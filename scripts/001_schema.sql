@@ -104,12 +104,47 @@ create index if not exists idx_comentarios_post on public.comentarios(post_id);
 create index if not exists idx_favoritos_user on public.favoritos(user_id, created_at desc);
 
 -- Storage policies para bucket público
-alter table if exists storage.objects enable row level security;
-drop policy if exists storage_public_read_imagenes_posts on storage.objects;
-create policy storage_public_read_imagenes_posts on storage.objects for select using ( bucket_id = 'imagenes-posts' );
-drop policy if exists storage_admin_write_imagenes_posts on storage.objects;
-create policy storage_admin_write_imagenes_posts on storage.objects for insert with check ( bucket_id = 'imagenes-posts' and public.is_admin() );
-drop policy if exists storage_admin_update_imagenes_posts on storage.objects;
-create policy storage_admin_update_imagenes_posts on storage.objects for update using ( bucket_id = 'imagenes-posts' and public.is_admin() ) with check ( bucket_id = 'imagenes-posts' and public.is_admin() );
-drop policy if exists storage_admin_delete_imagenes_posts on storage.objects;
-create policy storage_admin_delete_imagenes_posts on storage.objects for delete using ( bucket_id = 'imagenes-posts' and public.is_admin() );
+-- Nota: en algunos proyectos, el rol del editor SQL no es propietario de storage.objects
+-- y no puede crear/alterar políticas. Intentamos crearlas y si no hay permisos, emitimos un aviso.
+do $$
+begin
+  begin
+    create policy storage_public_read_imagenes_posts
+    on storage.objects for select using ( bucket_id = 'imagenes-posts' );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects. Crea las políticas desde Storage > Policies en el panel.';
+  when duplicate_object then
+    raise notice 'Política storage_public_read_imagenes_posts ya existe.';
+  end;
+
+  begin
+    create policy storage_admin_write_imagenes_posts
+    on storage.objects for insert
+    with check ( bucket_id = 'imagenes-posts' and public.is_admin() );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (insert).';
+  when duplicate_object then
+    raise notice 'Política storage_admin_write_imagenes_posts ya existe.';
+  end;
+
+  begin
+    create policy storage_admin_update_imagenes_posts
+    on storage.objects for update
+    using ( bucket_id = 'imagenes-posts' and public.is_admin() )
+    with check ( bucket_id = 'imagenes-posts' and public.is_admin() );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (update).';
+  when duplicate_object then
+    raise notice 'Política storage_admin_update_imagenes_posts ya existe.';
+  end;
+
+  begin
+    create policy storage_admin_delete_imagenes_posts
+    on storage.objects for delete
+    using ( bucket_id = 'imagenes-posts' and public.is_admin() );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (delete).';
+  when duplicate_object then
+    raise notice 'Política storage_admin_delete_imagenes_posts ya existe.';
+  end;
+end $$;
