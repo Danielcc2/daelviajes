@@ -1,4 +1,5 @@
 import './editmode.js';
+import './hero.js';
 import { supabase } from '../../config/supabase.js';
 function getSiteBase(){
   try {
