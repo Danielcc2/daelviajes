@@ -224,9 +224,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   range.addEventListener('input', ()=> setPos(range.value));
   let dragging = false;
   const onMove = (e)=>{
-    if (!dragging) return; const rect = fondo.getBoundingClientRect(); const y = (e.clientY - rect.top) / rect.height * 100; setPos(y);
+    if (!dragging) return; const rect = fondo.getBoundingClientRect(); const clientY = (e.touches && e.touches[0]?.clientY) || e.clientY; const y = (clientY - rect.top) / rect.height * 100; setPos(y);
   };
   fondo.addEventListener('mousedown', (e)=>{ dragging = true; fondo.style.cursor='grabbing'; onMove(e); });
-  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mousemove', onMove, { passive: true });
   document.addEventListener('mouseup', ()=>{ dragging=false; fondo.style.cursor='grab'; });
+  fondo.addEventListener('touchstart', (e)=>{ dragging = true; onMove(e); }, { passive: true });
+  document.addEventListener('touchmove', onMove, { passive: true });
+  document.addEventListener('touchend', ()=>{ dragging=false; });
 });

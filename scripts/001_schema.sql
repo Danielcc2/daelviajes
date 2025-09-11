@@ -94,7 +94,8 @@ select f.created_at,
        coalesce(
          p.portada_url,
          substring(p.contenido from '!\\[[^\\]]*\\]\\(([^)]+)\\)')
-       ) as portada_url
+       ) as portada_url,
+       p.portada_y
 from public.favoritos f
 join public.posts p on p.id = f.post_id
 where f.user_id = auth.uid();

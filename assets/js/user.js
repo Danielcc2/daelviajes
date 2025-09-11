@@ -38,21 +38,21 @@ export async function inicializarPerfil(){
   }
   const favCont = document.getElementById('misFavoritos');
   if (favCont){
-    const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria,portada_url').order('created_at',{ascending:false});
+    const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria,portada_url,portada_y').order('created_at',{ascending:false});
     favCont.innerHTML='';
     (data||[]).forEach(async p=>{
-      let cover = p.portada_url || '';
+      let cover = p.portada_url || ''; let pos = (typeof p.portada_y === 'number') ? p.portada_y : 50;
       const el=document.createElement('article'); el.className='tarjeta-articulo' + (cover ? ' has-bg' : '');
-      el.innerHTML = `${cover ? `<div class=\"tarjeta-bg\" style=\"background-image:url('${cover}')\"></div>` : ''}<div class=\"contenido-tarjeta\"><h3><a href=\"../post.html?slug=${p.slug}\">${p.titulo}</a></h3><p class=\"extracto\">${p.resumen??''}</p><span class=\"categoria\">${p.categoria??''}</span></div>`;
+      el.innerHTML = `${cover ? `<div class=\"tarjeta-bg\" style=\"background-image:url('${cover}');background-position:center ${pos}%\"></div>` : ''}<div class=\"contenido-tarjeta\"><h3><a href=\"../post.html?slug=${p.slug}\">${p.titulo}</a></h3><p class=\"extracto\">${p.resumen??''}</p><span class=\"categoria\">${p.categoria??''}</span></div>`;
       favCont.appendChild(el);
       // Fallback cliente: si no hay portada, intenta extraer primera imagen del post publicado
       if (!cover){
         try {
-          const { data: post } = await supabase.from('posts').select('contenido,portada_url').eq('slug', p.slug).eq('publicado', true).single();
-          cover = post?.portada_url || extraerPrimeraImagen(post?.contenido||'');
+          const { data: post } = await supabase.from('posts').select('contenido,portada_url,portada_y').eq('slug', p.slug).eq('publicado', true).single();
+          cover = post?.portada_url || extraerPrimeraImagen(post?.contenido||''); pos = (typeof post?.portada_y === 'number') ? post.portada_y : 50;
           if (cover){
             el.classList.add('has-bg');
-            const bg = document.createElement('div'); bg.className='tarjeta-bg'; bg.style.backgroundImage = `url('${cover}')`;
+            const bg = document.createElement('div'); bg.className='tarjeta-bg'; bg.style.backgroundImage = `url('${cover}')`; bg.style.backgroundPosition = `center ${pos}%`;
             el.insertBefore(bg, el.firstChild);
           }
         } catch(_){ /* ignore */ }
