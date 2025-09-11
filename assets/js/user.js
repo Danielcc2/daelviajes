@@ -40,9 +40,23 @@ export async function inicializarPerfil(){
   if (favCont){
     const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria,portada_url').order('created_at',{ascending:false});
     favCont.innerHTML='';
-    (data||[]).forEach(p=>{ const cover = p.portada_url; const el=document.createElement('article'); el.className='tarjeta-articulo' + (cover ? ' has-bg' : '');
+    (data||[]).forEach(async p=>{
+      let cover = p.portada_url || '';
+      const el=document.createElement('article'); el.className='tarjeta-articulo' + (cover ? ' has-bg' : '');
       el.innerHTML = `${cover ? `<div class=\"tarjeta-bg\" style=\"background-image:url('${cover}')\"></div>` : ''}<div class=\"contenido-tarjeta\"><h3><a href=\"../post.html?slug=${p.slug}\">${p.titulo}</a></h3><p class=\"extracto\">${p.resumen??''}</p><span class=\"categoria\">${p.categoria??''}</span></div>`;
       favCont.appendChild(el);
+      // Fallback cliente: si no hay portada, intenta extraer primera imagen del post publicado
+      if (!cover){
+        try {
+          const { data: post } = await supabase.from('posts').select('contenido,portada_url').eq('slug', p.slug).eq('publicado', true).single();
+          cover = post?.portada_url || extraerPrimeraImagen(post?.contenido||'');
+          if (cover){
+            el.classList.add('has-bg');
+            const bg = document.createElement('div'); bg.className='tarjeta-bg'; bg.style.backgroundImage = `url('${cover}')`;
+            el.insertBefore(bg, el.firstChild);
+          }
+        } catch(_){ /* ignore */ }
+      }
     });
   }
 }
@@ -67,4 +81,9 @@ export async function listarItinerariosPublicos(){
   const { data } = await supabase.from('itinerarios_publicos').select('titulo,resumen,slug').order('fecha_pub',{ascending:false});
   cont.innerHTML=''; (data||[]).forEach(p=>{ const el=document.createElement('article'); el.className='tarjeta-articulo';
     el.innerHTML=`<div class="contenido-tarjeta"><h3><a href="../post.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p></div>`; cont.appendChild(el); });
+}
+
+function extraerPrimeraImagen(md=''){
+  const m = md && typeof md === 'string' ? md.match(/!\[[^\]]*\]\(([^)]+)\)/) : null;
+  return m ? m[1] : '';
 }
