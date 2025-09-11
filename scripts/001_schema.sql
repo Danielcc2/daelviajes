@@ -40,6 +40,8 @@ create table if not exists public.posts (
   autor_id uuid references public.profiles(id) on delete set null,
   fecha_pub timestamptz default now()
 );
+-- campo opcional de portada
+alter table public.posts add column if not exists portada_url text;
 alter table public.posts enable row level security;
 drop policy if exists posts_select_publicados on public.posts;
 create policy posts_select_publicados on public.posts for select using (publicado = true);

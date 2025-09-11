@@ -228,8 +228,25 @@ a:hover {
   overflow: hidden;
 }
 
+/* Tarjetas con imagen de fondo */
+.tarjeta-articulo.has-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.tarjeta-articulo .tarjeta-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(.75);
+  z-index: 0;
+}
+
 .contenido-tarjeta {
   padding: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .categoria {
@@ -328,6 +345,17 @@ a:hover {
   border: 1px solid #1b2431;
   border-radius: .6rem;
   padding: .75rem;
+}
+
+/* Portada en página de post */
+.post-cover {
+  height: 260px;
+  background: #0c1016;
+  border: 1px solid #1a212c;
+  border-radius: 12px;
+  margin: 0 0 1rem;
+  background-size: cover;
+  background-position: center;
 }
 
 /* Cookie banner */

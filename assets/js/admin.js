@@ -3,6 +3,30 @@ export async function requerirAdmin(){ const { data: { session } } = await supab
   const { data } = await supabase.from('profiles').select('is_admin').single(); if (!data?.is_admin){ alert('Solo administradores'); location.href='../index.html'; } }
 export async function gestionarPosts(){ await requerirAdmin();
   const form = document.getElementById('formPost'); const tabla = document.getElementById('tablaPosts');
+  // Uploader de portada
+  const portadaInput = document.getElementById('imgPortada');
+  const btnPortada = document.getElementById('btnSubirPortada');
+  const portadaMsg = document.getElementById('portadaMsg');
+  const portadaUrl = document.getElementById('portadaUrl');
+  const portadaPreview = document.getElementById('portadaPreview');
+  const portadaFondo = document.getElementById('portadaFondo');
+  if (btnPortada && portadaInput){
+    btnPortada.addEventListener('click', async ()=>{
+      if (!portadaInput.files || portadaInput.files.length===0){ portadaMsg.textContent='Elige una imagen de portada.'; portadaMsg.className='msg error'; return; }
+      const file = portadaInput.files[0];
+      const safe = file.name.replace(/[^a-zA-Z0-9_.-]+/g,'_');
+      const path = `covers/${Date.now()}_${safe}`;
+      portadaMsg.textContent='Subiendo portada...';
+      const { error } = await supabase.storage.from('imagenes-posts').upload(path, file, { cacheControl:'3600', upsert:false, contentType: file.type || 'image/*' });
+      if (error){ portadaMsg.textContent='Error: '+error.message; portadaMsg.className='msg error'; return; }
+      const { data } = supabase.storage.from('imagenes-posts').getPublicUrl(path);
+      const url = data?.publicUrl;
+      if (!url){ portadaMsg.textContent='No se pudo obtener URL.'; portadaMsg.className='msg error'; return; }
+      portadaUrl.value = url;
+      if (portadaPreview && portadaFondo){ portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${url})`; }
+      portadaMsg.textContent='Portada lista.'; portadaMsg.className='msg ok';
+    });
+  }
   async function cargar(){ const { data } = await supabase.from('posts').select('id,titulo,categoria,publicado,fecha_pub').order('fecha_pub',{ascending:false});
     tabla.innerHTML = '<div class="tabla-row tabla-head">Título — Categoría — Publicado</div>';
     (data||[]).forEach(p => { const row = document.createElement('div'); row.className='tabla-row';

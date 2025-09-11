@@ -54,6 +54,13 @@
       <button class="btn btn-secundario" id="btnSubirImg" type="button">Subir imagen</button>
       <span id="imgMsg" class="msg"></span>
     </div>
+    <div class="uploader">
+      <input type="file" id="imgPortada" accept="image/*" />
+      <button class="btn btn-secundario" id="btnSubirPortada" type="button">Subir portada</button>
+      <input type="hidden" name="portada_url" id="portadaUrl" />
+      <span id="portadaMsg" class="msg"></span>
+      <div id="portadaPreview" class="panel" style="margin-top:.5rem;display:none"><em>Portada seleccionada</em><div style="height:140px;background:#0b0e12;border-radius:8px;background-size:cover;background-position:center" id="portadaFondo"></div></div>
+    </div>
     <input name="titulo" placeholder="Título" required />
     <select name="categoria" required>
       <option>Guías</option>

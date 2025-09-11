@@ -16,12 +16,13 @@ if (btnSalir){ btnSalir.addEventListener('click', async (e)=>{ e.preventDefault(
 
 export async function cargarUltimosArticulos(){
   const ul = document.getElementById('listUltimos'); if (!ul) return;
-  const { data, error } = await supabase.from('posts').select('id,slug,titulo,resumen,categoria').eq('publicado', true).order('fecha_pub',{ascending:false}).limit(6);
+  const { data, error } = await supabase.from('posts').select('id,slug,titulo,resumen,categoria,portada_url,contenido').eq('publicado', true).order('fecha_pub',{ascending:false}).limit(6);
   if (error) return console.error(error);
   ul.innerHTML = '';
   (data||[]).forEach(p => {
-    const el = document.createElement('article'); el.className = 'tarjeta-articulo';
-    el.innerHTML = `<div class="contenido-tarjeta">
+    const cover = p.portada_url || extraerPrimeraImagen(p.contenido);
+    const el = document.createElement('article'); el.className = 'tarjeta-articulo' + (cover ? ' has-bg' : '');
+    el.innerHTML = `${cover ? `<div class="tarjeta-bg" style="background-image:url('${cover}')"></div>` : ''}<div class="contenido-tarjeta">
       <h3><a href="post.html?slug=${p.slug}">${p.titulo}</a></h3>
       <p class="extracto">${p.resumen??''}</p><span class="categoria">${p.categoria??''}</span>
     </div>`;
@@ -33,15 +34,16 @@ export async function cargarUltimosArticulos(){
 
 export async function buscarPosts(q = '', categoria = ''){
   const cont = document.getElementById('listBlog'); if (!cont) return;
-  let query = supabase.from('posts').select('id,slug,titulo,resumen,categoria').eq('publicado', true);
+  let query = supabase.from('posts').select('id,slug,titulo,resumen,categoria,portada_url,contenido').eq('publicado', true);
   if (q) query = query.ilike('titulo', `%${q}%`);
   if (categoria) query = query.eq('categoria', categoria);
   const { data, error } = await query.order('fecha_pub',{ascending:false});
   if (error) return console.error(error);
   cont.innerHTML = '';
   (data||[]).forEach(p => {
-    const el = document.createElement('article'); el.className = 'tarjeta-articulo';
-    el.innerHTML = `<div class="contenido-tarjeta">
+    const cover = p.portada_url || extraerPrimeraImagen(p.contenido);
+    const el = document.createElement('article'); el.className = 'tarjeta-articulo' + (cover ? ' has-bg' : '');
+    el.innerHTML = `${cover ? `<div class="tarjeta-bg" style="background-image:url('${cover}')"></div>` : ''}<div class="contenido-tarjeta">
       <h3><a href="post.html?slug=${p.slug}">${p.titulo}</a></h3>
       <p class="extracto">${p.resumen??''}</p><span class="categoria">${p.categoria??''}</span>
     </div>`;
@@ -55,12 +57,13 @@ export async function listarResenas(){ return buscarPorTipo('Reseñas','listRese
 export async function listarConsejos(){ return buscarPorTipo('Consejos','listConsejos'); }
 async function buscarPorTipo(tipo, targetId){
   const cont = document.getElementById(targetId); if (!cont) return;
-  const { data, error } = await supabase.from('posts').select('id,slug,titulo,resumen,categoria').eq('publicado', true).eq('categoria', tipo).order('fecha_pub',{ascending:false});
+  const { data, error } = await supabase.from('posts').select('id,slug,titulo,resumen,categoria,portada_url,contenido').eq('publicado', true).eq('categoria', tipo).order('fecha_pub',{ascending:false});
   if (error) return console.error(error);
   cont.innerHTML = '';
   (data||[]).forEach(p => {
-    const el = document.createElement('article'); el.className = 'tarjeta-articulo';
-    el.innerHTML = `<div class="contenido-tarjeta">
+    const cover = p.portada_url || extraerPrimeraImagen(p.contenido);
+    const el = document.createElement('article'); el.className = 'tarjeta-articulo' + (cover ? ' has-bg' : '');
+    el.innerHTML = `${cover ? `<div class="tarjeta-bg" style="background-image:url('${cover}')"></div>` : ''}<div class="contenido-tarjeta">
       <h3><a href="post.html?slug=${p.slug}">${p.titulo}</a></h3>
       <p class="extracto">${p.resumen??''}</p><span class="categoria">${p.categoria??''}</span>
     </div>`;
@@ -87,3 +90,8 @@ document.addEventListener('click', async (e)=>{
   if (error){ alert('No se pudo guardar (¿ya está en favoritos?).'); }
   else { btn.textContent='✓ Guardado'; btn.disabled=true; }
 });
+
+function extraerPrimeraImagen(md=''){
+  const m = md && typeof md === 'string' ? md.match(/!\[[^\]]*\]\(([^)]+)\)/) : null;
+  return m ? m[1] : '';
+}
