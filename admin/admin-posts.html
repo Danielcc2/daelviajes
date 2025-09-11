@@ -49,6 +49,7 @@
 <main class="contenedor">
   <h1>Contenido</h1>
   <form id="formPost" class="form-auth ancho">
+    <input type="hidden" name="id" id="postId" />
     <div class="uploader">
       <input type="file" id="imgFile" accept="image/*" />
       <button class="btn btn-secundario" id="btnSubirImg" type="button">Subir imagen</button>
@@ -56,7 +57,10 @@
     </div>
     <div class="uploader">
       <input type="file" id="imgPortada" accept="image/*" />
-      <button class="btn btn-secundario" id="btnSubirPortada" type="button">Subir portada</button>
+      <div>
+        <button class="btn btn-secundario" id="btnSubirPortada" type="button">Subir portada</button>
+        <button class="btn btn-secundario" id="btnQuitarPortada" type="button">Quitar portada</button>
+      </div>
       <input type="hidden" name="portada_url" id="portadaUrl" />
       <span id="portadaMsg" class="msg"></span>
       <div id="portadaPreview" class="panel" style="margin-top:.5rem;display:none"><em>Portada seleccionada</em><div style="height:140px;background:#0b0e12;border-radius:8px;background-size:cover;background-position:center" id="portadaFondo"></div></div>
@@ -71,7 +75,10 @@
     <textarea name="resumen" rows="4" placeholder="Resumen" required></textarea>
     <textarea name="contenido" id="mdContenido" rows="12" placeholder="Escribe en Markdown" required></textarea>
     <div class="panel" id="mdPreview" style="margin-top:.75rem"><em>Vista previa</em><div id="mdOut"></div></div>
-    <button class="btn btn-primario" type="submit">Publicar</button>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <button class="btn btn-primario" id="btnGuardarPost" type="submit">Publicar</button>
+      <button class="btn btn-secundario" id="btnCancelarEd" type="button" style="display:none">Cancelar edición</button>
+    </div>
     <div id="msgPost" class="msg"></div>
   </form>
   <h2>Listado</h2>

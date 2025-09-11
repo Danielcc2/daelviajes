@@ -6,7 +6,11 @@ export async function requerirAdmin(){
   if (error || !data?.is_admin){ alert('Solo administradores'); location.href='../index.html'; }
 }
 export async function gestionarPosts(){ await requerirAdmin();
-  const form = document.getElementById('formPost'); const tabla = document.getElementById('tablaPosts');
+  const form = document.getElementById('formPost');
+  const tabla = document.getElementById('tablaPosts');
+  const btnGuardar = document.getElementById('btnGuardarPost');
+  const btnCancelarEd = document.getElementById('btnCancelarEd');
+  const postIdInput = document.getElementById('postId');
   // Uploader de portada
   const portadaInput = document.getElementById('imgPortada');
   const btnPortada = document.getElementById('btnSubirPortada');
@@ -31,21 +35,57 @@ export async function gestionarPosts(){ await requerirAdmin();
       portadaMsg.textContent='Portada lista.'; portadaMsg.className='msg ok';
     });
   }
+  const btnQuitarPortada = document.getElementById('btnQuitarPortada');
+  if (btnQuitarPortada){
+    btnQuitarPortada.addEventListener('click', ()=>{
+      portadaUrl.value = '';
+      if (portadaPreview && portadaFondo){
+        portadaFondo.style.backgroundImage = 'none';
+        portadaPreview.style.display = 'none';
+      }
+    });
+  }
   async function cargar(){ const { data } = await supabase.from('posts').select('id,titulo,categoria,publicado,fecha_pub').order('fecha_pub',{ascending:false});
-    tabla.innerHTML = '<div class="tabla-row tabla-head">Título — Categoría — Publicado</div>';
+    tabla.innerHTML = '<div class="tabla-row tabla-head">Título — Categoría — Publicado — Acciones</div>';
     (data||[]).forEach(p => { const row = document.createElement('div'); row.className='tabla-row';
-      row.innerHTML = `${p.titulo} — ${p.categoria} — ${p.publicado ? 'Sí':'No'} <button class="btn btn-link" data-del="${p.id}">Eliminar</button>`; tabla.appendChild(row); });
+      row.innerHTML = `${p.titulo} — ${p.categoria} — ${p.publicado ? 'Sí':'No'} <button class="btn btn-link" data-edit="${p.id}">Editar</button> <button class="btn btn-link" data-del="${p.id}">Eliminar</button>`; tabla.appendChild(row); });
     tabla.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', async ()=>{ await supabase.from('posts').delete().eq('id', b.dataset.del); cargar(); }));
+    tabla.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', async ()=>{
+      const { data: p } = await supabase.from('posts').select('id,titulo,resumen,contenido,categoria,portada_url,publicado,slug').eq('id', b.dataset.edit).single();
+      if (!p) return;
+      if (postIdInput) postIdInput.value = p.id;
+      form.titulo.value = p.titulo || '';
+      form.categoria.value = p.categoria || '';
+      form.resumen.value = p.resumen || '';
+      form.contenido.value = p.contenido || '';
+      if (typeof marked !== 'undefined'){ document.getElementById('mdOut').innerHTML = marked.parse(form.contenido.value); }
+      portadaUrl.value = p.portada_url || '';
+      if (p.portada_url && portadaPreview && portadaFondo){ portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${p.portada_url})`; } else if (portadaPreview){ portadaPreview.style.display='none'; }
+      if (btnGuardar) btnGuardar.textContent = 'Guardar cambios';
+      if (btnCancelarEd) btnCancelarEd.style.display = 'inline-block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }));
   }
   form.addEventListener('submit', async (e)=>{
     e.preventDefault(); const fd = new FormData(form); const payload = Object.fromEntries(fd.entries());
-    payload.publicado = true; payload.slug = (payload.titulo||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-    payload.fecha_pub = new Date().toISOString();
-    if (!payload.portada_url){ const m = (payload.contenido||'').match(/!\[[^\]]*\]\(([^)]+)\)/); if (m) payload.portada_url = m[1]; }
-    const { error } = await supabase.from('posts').insert(payload);
+    const editingId = postIdInput?.value || '';
+    let error;
+    if (editingId){
+      delete payload.id;
+      const res = await supabase.from('posts').update(payload).eq('id', editingId);
+      error = res.error;
+    } else {
+      payload.publicado = true; payload.slug = (payload.titulo||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+      payload.fecha_pub = new Date().toISOString();
+      if (!payload.portada_url){ const m = (payload.contenido||'').match(/!\[[^\]]*\]\(([^)]+)\)/); if (m) payload.portada_url = m[1]; }
+      const res = await supabase.from('posts').insert(payload);
+      error = res.error;
+    }
     const msg = document.getElementById('msgPost');
-    if (error){ msg.textContent='Error al publicar'; msg.className='msg error'; } else { msg.textContent='Publicado'; msg.className='msg ok'; form.reset(); cargar(); }
+    if (error){ msg.textContent='Error al guardar'; msg.className='msg error'; }
+    else { msg.textContent= editingId ? 'Cambios guardados' : 'Publicado'; msg.className='msg ok'; form.reset(); if (postIdInput) postIdInput.value=''; portadaUrl.value=''; if (portadaPreview) portadaPreview.style.display='none'; if (btnGuardar) btnGuardar.textContent='Publicar'; if (btnCancelarEd) btnCancelarEd.style.display='none'; cargar(); }
   });
+  if (btnCancelarEd){ btnCancelarEd.addEventListener('click', ()=>{ form.reset(); if (postIdInput) postIdInput.value=''; portadaUrl.value=''; if (portadaPreview) portadaPreview.style.display='none'; if (btnGuardar) btnGuardar.textContent='Publicar'; btnCancelarEd.style.display='none'; document.getElementById('msgPost').textContent=''; }); }
   cargar();
 }
 // Usuarios
