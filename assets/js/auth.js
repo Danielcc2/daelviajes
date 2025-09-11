@@ -19,8 +19,19 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
   if (error){ msg.textContent = error.message; msg.className='msg error'; }
   else { msg.textContent = 'Revisa tu email para confirmar la cuenta.'; msg.className='msg ok'; }
 });}
-(async () => { const { data } = await supabase.auth.getSession(); const navCuenta = document.getElementById('navCuenta'); if (!navCuenta) return;
-  if (data?.session){ navCuenta.textContent = data.session.user.email.split('@')[0]; } else { navCuenta.textContent = 'Iniciar sesión'; navCuenta.href = 'index.html#login'; }
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  const navCuenta = document.getElementById('navCuenta');
+  if (navCuenta){
+    if (data?.session){ navCuenta.textContent = data.session.user.email.split('@')[0]; }
+    else { navCuenta.textContent = 'Iniciar sesión'; navCuenta.href = 'index.html#login'; }
+  }
+  // Ocultar el bloque de autenticación en la home si ya hay sesión
+  const bloqueAuth = document.getElementById('bloqueAuth');
+  if (bloqueAuth){
+    if (data?.session){ bloqueAuth.setAttribute('hidden',''); }
+    else { bloqueAuth.removeAttribute('hidden'); }
+  }
 })();
 const btnRec = document.getElementById('btnRecuperar');
 if (btnRec){
