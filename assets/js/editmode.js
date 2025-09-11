@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const { data } = await supabase.from('contenidos').select('id, html').in('id', ids);
   const map = new Map((data||[]).map(r => [r.id, r.html])); editables.forEach(el => { const saved = map.get(el.id); if (saved) el.innerHTML = saved; });
   const { data: { session } } = await supabase.auth.getSession(); if (!session) return;
-  const { data: prof } = await supabase.from('profiles').select('is_admin').single(); if (!prof?.is_admin) return;
+  const { data: prof } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single(); if (!prof?.is_admin) return;
   const style = document.createElement('style');
   style.textContent = `.btn-edit{{position:absolute;top:.4rem;right:.4rem;background:#0fdc8b;color:#001b11;border:none;border-radius:.5rem;padding:.2rem .45rem;font-weight:800;cursor:pointer;font-size:.85rem} .editable-wrap{{position:relative;outline:1px dashed #1b2431;border-radius:.35rem}} .editable-on{{outline:1px solid #0fdc8b;box-shadow:0 0 0 2px rgba(15,220,139,.25) inset}}`;
   document.head.appendChild(style);

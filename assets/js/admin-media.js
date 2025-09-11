@@ -1,6 +1,10 @@
 import { supabase } from '../../config/supabase.js';
-async function requerirAdmin(){ const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='../index.html'; throw new Error('no session'); }
-  const { data, error } = await supabase.from('profiles').select('is_admin').single(); if (error || !data?.is_admin){ alert('Solo administradores.'); location.href='../index.html'; throw new Error('no admin'); } }
+async function requerirAdmin(){
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session){ location.href='../index.html'; throw new Error('no session'); }
+  const { data, error } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single();
+  if (error || !data?.is_admin){ alert('Solo administradores.'); location.href='../index.html'; throw new Error('no admin'); }
+}
 let pagina = 1; const LIMITE = 50;
 function render(items){
   const tabla = document.getElementById('mediaTabla'); if (pagina===1) tabla.innerHTML = '<div class="tabla-row tabla-head">Nombre — Tamaño — Modificación — Acciones</div>';

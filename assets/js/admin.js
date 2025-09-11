@@ -1,6 +1,10 @@
 import { supabase } from '../../config/supabase.js';
-export async function requerirAdmin(){ const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='../index.html'; return; }
-  const { data } = await supabase.from('profiles').select('is_admin').single(); if (!data?.is_admin){ alert('Solo administradores'); location.href='../index.html'; } }
+export async function requerirAdmin(){
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session){ location.href='../index.html'; return; }
+  const { data, error } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single();
+  if (error || !data?.is_admin){ alert('Solo administradores'); location.href='../index.html'; }
+}
 export async function gestionarPosts(){ await requerirAdmin();
   const form = document.getElementById('formPost'); const tabla = document.getElementById('tablaPosts');
   // Uploader de portada
