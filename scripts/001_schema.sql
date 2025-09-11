@@ -1,9 +1,4 @@
--- 001_schema.sql — DAEL Viajes
 create extension if not exists pgcrypto;
--- is_admin helper
-create or replace function public.is_admin() returns boolean language sql stable as $$
-  select coalesce((select is_admin from public.profiles where id = auth.uid()), false);
-$$;
 -- profiles
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -13,6 +8,11 @@ create or replace function public.handle_new_user() returns trigger language plp
 begin insert into public.profiles (id, email) values (new.id, new.email); return new; end; $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+
+-- is_admin helper (se define después de crear profiles)
+create or replace function public.is_admin() returns boolean language sql stable as $$
+  select coalesce((select is_admin from public.profiles where id = auth.uid()), false);
+$$;
 
 -- posts
 create table if not exists public.posts (
