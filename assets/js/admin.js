@@ -86,8 +86,9 @@ export async function gestionarPosts(){ await requerirAdmin();
       portadaUrl.value = url;
       if (portadaPreview && portadaFondo){
         portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${url})`;
-        const pos = (portadaPosRange && portadaPosRange.value) ? portadaPosRange.value : 50;
-        portadaFondo.style.backgroundPosition = `center ${pos}%`;
+        const posY = (portadaPosRange && portadaPosRange.value) ? portadaPosRange.value : 50;
+        const posX = (portadaPosXRange && portadaPosXRange.value) ? portadaPosXRange.value : 50;
+        portadaFondo.style.backgroundPosition = `${posX}% ${posY}%`;
       }
       portadaMsg.textContent='Portada lista.'; portadaMsg.className='msg ok';
     });
@@ -141,10 +142,13 @@ export async function gestionarPosts(){ await requerirAdmin();
       portadaUrl.value = p.portada_url || '';
       if (p.portada_url && portadaPreview && portadaFondo){
         portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${p.portada_url})`;
-        const pos = (typeof p.portada_y === 'number') ? p.portada_y : 50;
-        if (portadaPosRange) portadaPosRange.value = pos;
-        if (portadaPosVal) portadaPosVal.textContent = pos+"%";
-        portadaFondo.style.backgroundPosition = `center ${pos}%`;
+        const posY = (typeof p.portada_y === 'number') ? p.portada_y : 50;
+        const posX = (typeof p.portada_x === 'number') ? p.portada_x : 50;
+        if (portadaPosRange) portadaPosRange.value = posY;
+        if (portadaPosVal) portadaPosVal.textContent = posY+"%";
+        if (portadaPosXRange) portadaPosXRange.value = posX;
+        if (portadaPosXVal) portadaPosXVal.textContent = posX+"%";
+        portadaFondo.style.backgroundPosition = `${posX}% ${posY}%`;
       } else if (portadaPreview){ portadaPreview.style.display='none'; }
       if (btnGuardar) btnGuardar.textContent = 'Guardar cambios';
       if (btnCancelarEd) btnCancelarEd.style.display = 'inline-block';
@@ -161,6 +165,7 @@ export async function gestionarPosts(){ await requerirAdmin();
     if (editingId){
       delete payload.id;
       payload.portada_y = portadaPosRange ? parseInt(portadaPosRange.value || '50', 10) : 50;
+      payload.portada_x = (typeof portadaPosXRange !== 'undefined' && portadaPosXRange) ? parseInt(portadaPosXRange.value || '50', 10) : 50;
       const res = await supabase.from('posts').update(payload).eq('id', editingId);
       error = res.error;
     } else {
@@ -168,6 +173,7 @@ export async function gestionarPosts(){ await requerirAdmin();
       payload.fecha_pub = new Date().toISOString();
       if (!payload.portada_url){ const m = (payload.contenido||'').match(/!\[[^\]]*\]\(([^)]+)\)/); if (m) payload.portada_url = m[1]; }
       payload.portada_y = portadaPosRange ? parseInt(portadaPosRange.value || '50', 10) : 50;
+      payload.portada_x = (typeof portadaPosXRange !== 'undefined' && portadaPosXRange) ? parseInt(portadaPosXRange.value || '50', 10) : 50;
       const res = await supabase.from('posts').insert(payload);
       error = res.error;
     }
@@ -206,10 +212,11 @@ export async function listarUsuarios(){ await requerirAdmin();
     if (error){ msg.textContent='Error: '+error.message; msg.className='msg error'; return; }
     const { data: pub } = supabase.storage.from('imagenes-posts').getPublicUrl(path); const url = pub?.publicUrl;
     if (!url){ msg.textContent='No se pudo obtener URL pública.'; msg.className='msg error'; return; }
-    if (window.editor){ window.editor.insertText(`\n\n![imagen](${url})\n\n`); }
-    else if (area){ area.value += `\n\n![imagen](${url})\n\n`; }
-    msg.textContent='Imagen subida y añadida.'; msg.className='msg ok'; fileInput.value='';
-    const list = document.getElementById('imgsPostList'); if (list){ list.innerHTML=''; }
+    // Usar como portada por defecto
+    const portadaUrl = document.getElementById('portadaUrl'); const portadaPreview = document.getElementById('portadaPreview'); const portadaFondo = document.getElementById('portadaFondo');
+    if (portadaUrl) portadaUrl.value = url;
+    if (portadaPreview && portadaFondo){ portadaPreview.style.display='block'; portadaFondo.style.backgroundImage = `url(${url})`; }
+    msg.textContent='Portada subida y seleccionada.'; msg.className='msg ok'; fileInput.value='';
   });}
 })();
 

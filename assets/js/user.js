@@ -14,7 +14,7 @@ export async function inicializarPerfil(){
   const formPerfil = document.getElementById('formPerfil');
   const msgPerfil = document.getElementById('msgPerfil');
   if (formPerfil){
-    const { data: me } = await supabase.from('profiles').select('nombre, avatar_url').single();
+    const { data: me } = await supabase.from('profiles').select('nombre, avatar_url, is_admin').single();
     if (me?.nombre) formPerfil.nombre.value = me.nombre;
     formPerfil.addEventListener('submit', async (e)=>{
       e.preventDefault();
@@ -35,6 +35,17 @@ export async function inicializarPerfil(){
         if (msgPerfil){ msgPerfil.textContent='Perfil actualizado.'; msgPerfil.className='msg ok'; }
       } catch(err){ if (msgPerfil){ msgPerfil.textContent='No se pudo actualizar: '+(err?.message||''); msgPerfil.className='msg error'; } }
     });
+    // Mostrar acceso al panel admin si corresponde
+    if (me?.is_admin){
+      try{
+        const main = document.querySelector('main.contenedor') || document.querySelector('main');
+        if (main && !document.getElementById('adminPanelLink')){
+          const sec = document.createElement('section'); sec.className='panel'; sec.id='adminPanelLink';
+          sec.innerHTML = `<h2>Panel de administrador</h2><p><a class="btn btn-secundario" href="../admin/admin-dashboard.html">Ir al panel</a></p>`;
+          main.appendChild(sec);
+        }
+      } catch(_){ }
+    }
   }
   const favCont = document.getElementById('misFavoritos');
   if (favCont){

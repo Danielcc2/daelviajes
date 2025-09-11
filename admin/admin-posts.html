@@ -66,10 +66,18 @@
       </div>
       <input type="hidden" name="portada_url" id="portadaUrl" />
       <span id="portadaMsg" class="msg"></span>
-      <div class="panel" style="margin-top:.5rem">
-        <label>Posición vertical de portada</label>
-        <input type="range" id="portadaPos" min="0" max="100" value="50" />
-        <small class="link-sutil">Arrastra la imagen o usa el deslizador (<span id="portadaPosVal">50%</span>).</small>
+      <div class="panel" style="margin-top:.5rem;display:grid;gap:.5rem">
+        <div>
+          <label>Posición vertical de portada</label>
+          <input type="range" id="portadaPos" min="0" max="100" value="50" />
+          <small class="link-sutil">(<span id="portadaPosVal">50%</span>)</small>
+        </div>
+        <div>
+          <label>Posición horizontal de portada</label>
+          <input type="range" id="portadaPosX" min="0" max="100" value="50" />
+          <small class="link-sutil">(<span id="portadaPosXVal">50%</span>)</small>
+        </div>
+        <small class="link-sutil">Arrastra la previsualización para ajustar rápidamente (ratón o touch).</small>
       </div>
       <div id="portadaPreview" class="panel" style="margin-top:.5rem;display:none"><em>Portada seleccionada</em><div style="height:140px;background:#0b0e12;border-radius:8px;background-size:cover;background-position:center" id="portadaFondo"></div></div>
     </div>

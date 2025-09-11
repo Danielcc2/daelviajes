@@ -45,6 +45,7 @@ create table if not exists public.posts (
 -- campo opcional de portada
 alter table public.posts add column if not exists portada_url text;
 alter table public.posts add column if not exists portada_y int check (portada_y >= 0 and portada_y <= 100) default 50;
+alter table public.posts add column if not exists portada_x int check (portada_x >= 0 and portada_x <= 100) default 50;
 alter table public.posts enable row level security;
 drop policy if exists posts_select_publicados on public.posts;
 create policy posts_select_publicados on public.posts for select using (publicado = true);
@@ -95,7 +96,8 @@ select f.created_at,
          p.portada_url,
          substring(p.contenido from '!\\[[^\\]]*\\]\\(([^)]+)\\)')
        ) as portada_url,
-       p.portada_y
+       p.portada_y,
+       p.portada_x
 from public.favoritos f
 join public.posts p on p.id = f.post_id
 where f.user_id = auth.uid();
