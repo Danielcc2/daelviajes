@@ -9,14 +9,6 @@ async function cargarPost(){
   document.getElementById('postCategoria').textContent = post.categoria || '';
   const fecha = post.fecha_pub ? new Date(post.fecha_pub).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) : '';
   document.getElementById('postMeta').textContent = fecha ? `Publicado el ${fecha}` : '';
-  const cover = post.portada_url || extraerPrimeraImagen(post.contenido);
-  const covEl = document.getElementById('postCover');
-  if (covEl && cover){
-    covEl.style.backgroundImage = `url('${cover}')`;
-    const img = document.getElementById('postCoverImg');
-    if (img){ img.src = cover; img.removeAttribute('hidden'); }
-    covEl.removeAttribute('hidden');
-  }
   const c = document.getElementById('postContent');
   try { if (typeof marked !== 'undefined'){ c.innerHTML = marked.parse(post.contenido||''); } else { c.textContent = post.contenido||''; } } catch(e){ c.textContent = post.contenido||''; }
   const btnFav = document.getElementById('btnFavDetalle'); btnFav.dataset.id = post.id;
