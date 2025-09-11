@@ -418,3 +418,98 @@ a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Page Hero (overlay + wave divider) */
+.page-header-overlay {
+  position: relative;
+  min-height: clamp(420px, 70vh, 860px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.page-header-overlay .hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+}
+
+.page-header-overlay .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 45%), rgb(0 0 0 / 55%) 60%, rgb(0 0 0 / 65%));
+}
+
+.page-header-overlay .hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 900px;
+  padding: 1.5rem;
+}
+
+.page-header-overlay .hero-content h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.15;
+  margin: 0 0 .75rem;
+}
+
+.page-header-overlay .hero-content .subtitle {
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  color: var(--gris);
+  margin: 0 0 .5rem;
+}
+
+.page-header-overlay .hero-content .description {
+  font-size: clamp(.95rem, 1.6vw, 1.05rem);
+  color: var(--texto);
+  opacity: .9;
+  margin: 0 0 1.1rem;
+}
+
+.hero-actions {
+  display: inline-flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-hero {
+  border: 1px solid #1b2431;
+  border-radius: 9999px;
+  padding: .75rem 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-hero-primary {
+  background: var(--acento);
+  color: #001b11;
+}
+
+.btn-hero-primary:hover { opacity: .95; }
+
+.btn-hero-secondary {
+  background: rgb(20 26 34 / 85%);
+  color: var(--texto);
+}
+
+.btn-hero-secondary:hover { background: #141a22; }
+
+.has-wave-divider .wave-divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  line-height: 0;
+  color: var(--fondo);
+}
+
+.has-wave-divider .wave-divider svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
