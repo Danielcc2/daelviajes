@@ -85,7 +85,15 @@ create policy favoritos_insert_owner on public.favoritos for insert with check (
 drop policy if exists favoritos_delete_owner on public.favoritos;
 create policy favoritos_delete_owner on public.favoritos for delete using ( auth.uid() = user_id );
 create or replace view public.favoritos_view as
-select f.created_at, p.slug, p.titulo, p.resumen, p.categoria, p.portada_url
+select f.created_at,
+       p.slug,
+       p.titulo,
+       p.resumen,
+       p.categoria,
+       coalesce(
+         p.portada_url,
+         (regexp_matches(p.contenido, '!\\[[^\\]]*\\]\\(([^)]+)\\)', 'n'))[1]
+       ) as portada_url
 from public.favoritos f
 join public.posts p on p.id = f.post_id
 where f.user_id = auth.uid();
