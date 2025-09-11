@@ -1,9 +1,13 @@
 import { supabase } from '../../config/supabase.js';
+function getSiteBase(){
+  try { const logo = document.querySelector('a.logo-link'); if (logo){ const abs=new URL(logo.getAttribute('href')||'../index.html', window.location.href); return abs.href.replace(/index\.html(?:[?#].*)?$/, ''); } } catch(_){ }
+  const path = window.location.pathname; const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, ''); return new URL(dir, window.location.origin).href;
+}
 export async function requerirAdmin(){
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session){ location.href='../index.html'; return; }
+  if (!session){ location.href = getSiteBase() + 'index.html'; return; }
   const { data, error } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single();
-  if (error || !data?.is_admin){ alert('Solo administradores'); location.href='../index.html'; }
+  if (error || !data?.is_admin){ alert('Solo administradores'); location.href = getSiteBase() + 'index.html'; }
 }
 export async function gestionarPosts(){ await requerirAdmin();
   const form = document.getElementById('formPost');

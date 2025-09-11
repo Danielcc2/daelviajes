@@ -249,6 +249,14 @@ a:hover {
   z-index: 1;
 }
 
+/* Botón favorito fijo a la derecha-arriba en las tarjetas */
+.tarjeta-articulo .btn-fav {
+  position: absolute;
+  right: .75rem;
+  top: .75rem;
+  z-index: 2;
+}
+
 .categoria {
   font-size: .8rem;
   color: var(--acento);

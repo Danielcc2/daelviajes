@@ -9,6 +9,21 @@ function getSiteBase(){
   const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, '');
   return new URL(dir, window.location.origin).href;
 }
+// Normaliza enlaces relativos a absolutos respecto a la raíz del sitio
+function normalizeInternalLinks(){
+  const base = getSiteBase();
+  const anchors = document.querySelectorAll('a[href]');
+  anchors.forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+    if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(href) || href.startsWith('//')) return; // absoluto
+    // Reescribe relativo contra la raíz del sitio
+    const abs = new URL(href, base).href;
+    a.setAttribute('href', abs);
+  });
+}
+// Ejecuta tras parseo
+normalizeInternalLinks();
 // Menú móvil
 const btnHam = document.getElementById('btnHamburguer');
 const menuMovil = document.getElementById('menu-movil');
