@@ -9,8 +9,14 @@ begin insert into public.profiles (id, email) values (new.id, new.email); return
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
 
--- is_admin helper (se define después de crear profiles)
-create or replace function public.is_admin() returns boolean language sql stable as $$
+-- is_admin helper (Security Definer para evitar recursión RLS)
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
   select coalesce((select is_admin from public.profiles where id = auth.uid()), false);
 $$;
 -- RLS para profiles (dueño y admin)
@@ -18,15 +24,11 @@ alter table public.profiles enable row level security;
 drop policy if exists profiles_select_self on public.profiles;
 create policy profiles_select_self on public.profiles for select using ( id = auth.uid() );
 drop policy if exists profiles_select_admin on public.profiles;
-create policy profiles_select_admin on public.profiles for select using (
-  exists (select 1 from public.profiles me where me.id = auth.uid() and me.is_admin)
-);
+create policy profiles_select_admin on public.profiles for select using ( public.is_admin() );
 drop policy if exists profiles_update_self on public.profiles;
 create policy profiles_update_self on public.profiles for update using ( id = auth.uid() ) with check ( id = auth.uid() );
 drop policy if exists profiles_update_admin on public.profiles;
-create policy profiles_update_admin on public.profiles for update using (
-  exists (select 1 from public.profiles me where me.id = auth.uid() and me.is_admin)
-) with check ( true );
+create policy profiles_update_admin on public.profiles for update using ( public.is_admin() ) with check ( public.is_admin() );
 
 -- posts
 create table if not exists public.posts (
