@@ -452,7 +452,7 @@ a:hover {
 /* Page Hero (overlay + wave divider) */
 .page-header-overlay {
   position: relative;
-  min-height: 100vh;
+  min-height: 50vh;
   display: grid;
   place-items: center;
   overflow: hidden;
