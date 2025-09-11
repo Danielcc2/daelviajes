@@ -41,6 +41,7 @@ export async function gestionarPosts(){ await requerirAdmin();
     e.preventDefault(); const fd = new FormData(form); const payload = Object.fromEntries(fd.entries());
     payload.publicado = true; payload.slug = (payload.titulo||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
     payload.fecha_pub = new Date().toISOString();
+    if (!payload.portada_url){ const m = (payload.contenido||'').match(/!\[[^\]]*\]\(([^)]+)\)/); if (m) payload.portada_url = m[1]; }
     const { error } = await supabase.from('posts').insert(payload);
     const msg = document.getElementById('msgPost');
     if (error){ msg.textContent='Error al publicar'; msg.className='msg error'; } else { msg.textContent='Publicado'; msg.className='msg ok'; form.reset(); cargar(); }
