@@ -12,7 +12,8 @@ export async function gestionarPosts(){ await requerirAdmin();
   const btnCancelarEd = document.getElementById('btnCancelarEd');
   const postIdInput = document.getElementById('postId');
   // Uploader de portada
-  const portadaInput = document.getElementById('imgPortada');
+  // Usamos el mismo input de archivo para portada y para insertar en el contenido
+  const portadaInput = document.getElementById('imgFile');
   const btnPortada = document.getElementById('btnSubirPortada');
   const portadaMsg = document.getElementById('portadaMsg');
   const portadaUrl = document.getElementById('portadaUrl');

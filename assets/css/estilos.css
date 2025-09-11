@@ -321,9 +321,11 @@ a:hover {
 }
 
 .post-content img {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
   border-radius: 8px;
+  display: block;
 }
 
 .post-content pre,
