@@ -1,6 +1,32 @@
 import { supabase } from '../../config/supabase.js';
 export async function inicializarPerfil(){
   const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='index.html'; return; }
+  // Formulario de perfil: nombre y avatar
+  const formPerfil = document.getElementById('formPerfil');
+  const msgPerfil = document.getElementById('msgPerfil');
+  if (formPerfil){
+    const { data: me } = await supabase.from('profiles').select('nombre, avatar_url').single();
+    if (me?.nombre) formPerfil.nombre.value = me.nombre;
+    formPerfil.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const nombre = formPerfil.nombre.value || null;
+      let avatar_url = me?.avatar_url || null;
+      const file = formPerfil.avatar?.files?.[0];
+      try{
+        if (file){
+          const safe = file.name.replace(/[^a-zA-Z0-9_.-]+/g,'_');
+          const path = `avatars/${session.user.id}/${Date.now()}_${safe}`;
+          const up = await supabase.storage.from('avatars').upload(path, file, { upsert:false, cacheControl:'3600', contentType: file.type || 'image/*' });
+          if (up.error) throw up.error;
+          const pub = supabase.storage.from('avatars').getPublicUrl(path);
+          avatar_url = pub?.data?.publicUrl || avatar_url;
+        }
+        const upd = await supabase.from('profiles').update({ nombre, avatar_url }).eq('id', session.user.id);
+        if (upd.error) throw upd.error;
+        if (msgPerfil){ msgPerfil.textContent='Perfil actualizado.'; msgPerfil.className='msg ok'; }
+      } catch(err){ if (msgPerfil){ msgPerfil.textContent='No se pudo actualizar: '+(err?.message||''); msgPerfil.className='msg error'; } }
+    });
+  }
   const favCont = document.getElementById('misFavoritos');
   if (favCont){
     const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria').order('created_at',{ascending:false});
@@ -21,7 +47,7 @@ export async function gestionarItinerarios(){
       lista.appendChild(el); });
     lista.querySelectorAll('button[data-id]').forEach(btn=>btn.addEventListener('click', async ()=>{ await supabase.from('itinerarios_usuario').delete().eq('id', btn.dataset.id); cargar(); }));
   }
-  form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const payload = Object.fromEntries(fd.entries());
+  form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const payload = Object.fromEntries(fd.entries()); payload.user_id = session.user.id;
     const { error } = await supabase.from('itinerarios_usuario').insert(payload);
     if (error){ msg.textContent='Error al guardar'; msg.className='msg error'; } else { msg.textContent='Guardado'; msg.className='msg ok'; form.reset(); cargar(); }
   });

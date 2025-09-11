@@ -162,3 +162,63 @@ begin
     raise notice 'Política storage_admin_delete_imagenes_posts ya existe.';
   end;
 end $$;
+
+-- Bucket de avatares (lectura pública, escritura del dueño)
+do $$
+begin
+  begin
+    perform storage.create_bucket('avatars', public => true);
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear bucket avatars. Créalo en Storage > Buckets (public)';
+  when others then null; -- bucket puede existir
+  end;
+
+  -- Políticas RLS para avatars
+  begin
+    create policy avatars_public_read on storage.objects
+    for select using ( bucket_id = 'avatars' );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (avatars select).';
+  when duplicate_object then
+    raise notice 'Política avatars_public_read ya existe.';
+  end;
+
+  begin
+    create policy avatars_owner_insert on storage.objects
+    for insert with check (
+      bucket_id = 'avatars'
+      and auth.uid()::text = (storage.foldername(name))[1]
+    );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (avatars insert).';
+  when duplicate_object then
+    raise notice 'Política avatars_owner_insert ya existe.';
+  end;
+
+  begin
+    create policy avatars_owner_update on storage.objects
+    for update using (
+      bucket_id = 'avatars'
+      and auth.uid()::text = (storage.foldername(name))[1]
+    ) with check (
+      bucket_id = 'avatars'
+      and auth.uid()::text = (storage.foldername(name))[1]
+    );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (avatars update).';
+  when duplicate_object then
+    raise notice 'Política avatars_owner_update ya existe.';
+  end;
+
+  begin
+    create policy avatars_owner_delete on storage.objects
+    for delete using (
+      bucket_id = 'avatars'
+      and auth.uid()::text = (storage.foldername(name))[1]
+    );
+  exception when insufficient_privilege then
+    raise notice 'Sin privilegios para crear políticas en storage.objects (avatars delete).';
+  when duplicate_object then
+    raise notice 'Política avatars_owner_delete ya existe.';
+  end;
+end $$;
