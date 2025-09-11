@@ -364,6 +364,41 @@ a:hover {
   display: block;
 }
 
+/* Gestor de imágenes del post (admin) */
+.grid-imagenes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: .75rem;
+}
+
+.img-item {
+  position: relative;
+  border: 1px solid #1a212c;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0e1319;
+}
+
+.img-item img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.img-item button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ff6b6b;
+  color: #001b11;
+  border: none;
+  border-radius: 6px;
+  padding: .2rem .45rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .post-content h1,
 .post-content h2,
 .post-content h3 {

@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="../assets/css/estilos.css" />
   <script type="module" src="../assets/js/main.js" defer></script>
   <script type="module" src="../assets/js/auth.js" defer></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -72,8 +76,13 @@
       <option>Consejos</option>
     </select>
     <textarea name="resumen" rows="4" placeholder="Resumen" required></textarea>
-    <textarea name="contenido" id="mdContenido" rows="12" placeholder="Escribe en Markdown" required></textarea>
-    <div class="panel" id="mdPreview" style="margin-top:.75rem"><em>Vista previa</em><div id="mdOut"></div></div>
+    <div id="mdEditor" class="panel" style="padding:0;border:none"></div>
+    <textarea name="contenido" id="mdContenido" rows="12" placeholder="Escribe en Markdown" style="display:none"></textarea>
+    <div class="panel" id="imgsPanel" style="margin-top:.75rem">
+      <h3>Imágenes del artículo</h3>
+      <div id="imgsPostList" class="grid-imagenes"></div>
+      <small class="link-sutil">Pulsa la ✕ para eliminar y limpiar del contenido.</small>
+    </div>
     <div style="display:flex;gap:.5rem;align-items:center">
       <button class="btn btn-primario" id="btnGuardarPost" type="submit">Publicar</button>
       <button class="btn btn-secundario" id="btnCancelarEd" type="button" style="display:none">Cancelar edición</button>
