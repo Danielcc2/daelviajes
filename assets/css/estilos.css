@@ -322,6 +322,8 @@ a:hover {
 
 .post-content img {
   width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: 8px;

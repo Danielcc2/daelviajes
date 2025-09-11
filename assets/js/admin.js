@@ -11,22 +11,34 @@ export async function gestionarPosts(){ await requerirAdmin();
   const btnGuardar = document.getElementById('btnGuardarPost');
   const btnCancelarEd = document.getElementById('btnCancelarEd');
   const postIdInput = document.getElementById('postId');
-  // Uploader de portada
-  // Usamos el mismo input de archivo para portada y para insertar en el contenido
+  let currentSlug = '';
+  // Uploader (mismo input para contenido y portada)
   const portadaInput = document.getElementById('imgFile');
   const btnPortada = document.getElementById('btnSubirPortada');
   const portadaMsg = document.getElementById('portadaMsg');
   const portadaUrl = document.getElementById('portadaUrl');
   const portadaPreview = document.getElementById('portadaPreview');
   const portadaFondo = document.getElementById('portadaFondo');
+  function slugify(t=''){ return (t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+  async function resizeAndCrop(file, w, h, mime='image/webp', quality=0.85){
+    const img = await new Promise((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=URL.createObjectURL(file); });
+    const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx = canvas.getContext('2d');
+    const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    const sw = w / scale; const sh = h / scale;
+    const sx = (img.naturalWidth - sw) / 2; const sy = (img.naturalHeight - sh) / 2;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    const blob = await new Promise(res=>canvas.toBlob(res, mime, quality));
+    return blob || file;
+  }
   if (btnPortada && portadaInput){
     btnPortada.addEventListener('click', async ()=>{
       if (!portadaInput.files || portadaInput.files.length===0){ portadaMsg.textContent='Elige una imagen de portada.'; portadaMsg.className='msg error'; return; }
       const file = portadaInput.files[0];
-      const safe = file.name.replace(/[^a-zA-Z0-9_.-]+/g,'_');
-      const path = `covers/${Date.now()}_${safe}`;
+      const blob = await resizeAndCrop(file, 1600, 900, 'image/webp', 0.9);
+      const slug = currentSlug || slugify(form.titulo.value || 'post');
+      const path = `covers/${slug}/cover.webp`;
       portadaMsg.textContent='Subiendo portada...';
-      const { error } = await supabase.storage.from('imagenes-posts').upload(path, file, { cacheControl:'3600', upsert:false, contentType: file.type || 'image/*' });
+      const { error } = await supabase.storage.from('imagenes-posts').upload(path, blob, { cacheControl:'3600', upsert:true, contentType: 'image/webp' });
       if (error){ portadaMsg.textContent='Error: '+error.message; portadaMsg.className='msg error'; return; }
       const { data } = supabase.storage.from('imagenes-posts').getPublicUrl(path);
       const url = data?.publicUrl;
@@ -99,11 +111,22 @@ export async function listarUsuarios(){ await requerirAdmin();
   const area = document.getElementById('mdContenido'); const out = document.getElementById('mdOut');
   if (area && out && typeof marked !== 'undefined'){ const render=()=>{ out.innerHTML = marked.parse(area.value||''); }; area.addEventListener('input', render); render(); }
   const fileInput = document.getElementById('imgFile'); const btn = document.getElementById('btnSubirImg'); const msg = document.getElementById('imgMsg');
+  async function resizeAndCrop(file, w, h, mime='image/webp', quality=0.85){
+    const img = await new Promise((res, rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=URL.createObjectURL(file); });
+    const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx = canvas.getContext('2d');
+    const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    const sw = w / scale; const sh = h / scale;
+    const sx = (img.naturalWidth - sw) / 2; const sy = (img.naturalHeight - sh) / 2;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    const blob = await new Promise(res=>canvas.toBlob(res, mime, quality));
+    return blob || file;
+  }
   if (btn && fileInput){ btn.addEventListener('click', async ()=>{
     if (!fileInput.files || fileInput.files.length===0){ msg.textContent='Elige una imagen primero.'; msg.className='msg error'; return; }
     const file = fileInput.files[0]; const { data: { session } } = await supabase.auth.getSession(); if (!session){ msg.textContent='Inicia sesión.'; msg.className='msg error'; return; }
-    const path = `posts/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]+/g,'_')}`; msg.textContent='Subiendo...';
-    const { error } = await supabase.storage.from('imagenes-posts').upload(path, file, { cacheControl:'3600', upsert:false, contentType: file.type || 'image/*' });
+    const blob = await resizeAndCrop(file, 1280, 720, 'image/webp', 0.85);
+    const path = `posts/${Date.now()}_content.webp`; msg.textContent='Subiendo...';
+    const { error } = await supabase.storage.from('imagenes-posts').upload(path, blob, { cacheControl:'3600', upsert:false, contentType: 'image/webp' });
     if (error){ msg.textContent='Error: '+error.message; msg.className='msg error'; return; }
     const { data: pub } = supabase.storage.from('imagenes-posts').getPublicUrl(path); const url = pub?.publicUrl;
     if (!url){ msg.textContent='No se pudo obtener URL pública.'; msg.className='msg error'; return; }
