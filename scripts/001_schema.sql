@@ -92,7 +92,7 @@ select f.created_at,
        p.categoria,
        coalesce(
          p.portada_url,
-         (regexp_matches(p.contenido, '!\\[[^\\]]*\\]\\(([^)]+)\\)', 'n'))[1]
+         substring(p.contenido from '!\\[[^\\]]*\\]\\(([^)]+)\\)')
        ) as portada_url
 from public.favoritos f
 join public.posts p on p.id = f.post_id
