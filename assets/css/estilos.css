@@ -242,6 +242,7 @@ a:hover {
   background-position: center;
   filter: brightness(.75);
   z-index: 0;
+  transition: transform .35s ease;
 }
 
 .contenido-tarjeta {
@@ -272,6 +273,11 @@ a:hover {
 
 .tarjeta-articulo:hover::after {
   transform: translateX(120%);
+}
+
+/* Zoom suave del fondo en hover */
+.tarjeta-articulo:hover .tarjeta-bg {
+  transform: scale(1.05);
 }
 
 @media (prefers-reduced-motion: reduce) {
