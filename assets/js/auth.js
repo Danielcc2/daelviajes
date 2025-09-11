@@ -23,5 +23,12 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
   if (data?.session){ navCuenta.textContent = data.session.user.email.split('@')[0]; } else { navCuenta.textContent = 'Iniciar sesión'; navCuenta.href = 'index.html#login'; }
 })();
 const btnRec = document.getElementById('btnRecuperar');
-if (btnRec){ btnRec.addEventListener('click', async ()=>{ const email = (document.getElementById('loginEmail')||{}).value; if (!email) return alert('Escribe tu email.');
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/usuario/perfil.html' }); if (error) alert(error.message); else alert('Te enviamos un enlace para restablecer.'); });}
+if (btnRec){
+  btnRec.addEventListener('click', async () => {
+    const email = (document.getElementById('loginEmail') || {}).value;
+    if (!email) return alert('Escribe tu email.');
+    const redirectTo = new URL('usuario/perfil.html', window.location.href).toString();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) alert(error.message); else alert('Te enviamos un enlace para restablecer.');
+  });
+}
