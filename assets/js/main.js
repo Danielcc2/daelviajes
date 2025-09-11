@@ -12,6 +12,8 @@ function getSiteBase(){
 }
 // Normaliza enlaces relativos a absolutos respecto a la raíz del sitio
 function normalizeInternalLinks(){
+  // No reescribimos rutas dentro del panel admin
+  if (window.location.pathname.includes('/admin/')) return;
   const base = getSiteBase();
   const anchors = document.querySelectorAll('a[href]');
   anchors.forEach(a => {
