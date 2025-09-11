@@ -38,10 +38,10 @@ export async function inicializarPerfil(){
   }
   const favCont = document.getElementById('misFavoritos');
   if (favCont){
-    const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria').order('created_at',{ascending:false});
+    const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria,portada_url').order('created_at',{ascending:false});
     favCont.innerHTML='';
-    (data||[]).forEach(p=>{ const el=document.createElement('article'); el.className='tarjeta-articulo';
-      el.innerHTML = `<div class="contenido-tarjeta"><h3><a href="../post.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p><span class="categoria">${p.categoria??''}</span></div>`;
+    (data||[]).forEach(p=>{ const cover = p.portada_url; const el=document.createElement('article'); el.className='tarjeta-articulo' + (cover ? ' has-bg' : '');
+      el.innerHTML = `${cover ? `<div class=\"tarjeta-bg\" style=\"background-image:url('${cover}')\"></div>` : ''}<div class=\"contenido-tarjeta\"><h3><a href=\"../post.html?slug=${p.slug}\">${p.titulo}</a></h3><p class=\"extracto\">${p.resumen??''}</p><span class=\"categoria\">${p.categoria??''}</span></div>`;
       favCont.appendChild(el);
     });
   }
