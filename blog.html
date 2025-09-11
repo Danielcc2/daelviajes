@@ -48,7 +48,12 @@
 <main class="contenedor">
   <h1>Blog de viajes</h1>
   <div class="filtros">
-    <input id="q" placeholder="Buscar artículos..." />
+    <div class="searchbox">
+      <input id="q" placeholder="Buscar artículos..." autocomplete="off" />
+      <div id="sugWrap" class="sug-wrap" hidden>
+        <ul id="sugList" class="sug-list"></ul>
+      </div>
+    </div>
     <select id="categoria">
       <option value="">Todas las categorías</option>
       <option>Guías</option>
@@ -76,10 +81,32 @@
 
 <script type="module">
   import { buscarPosts } from './assets/js/main.js';
+  import { supabase } from './config/supabase.js';
   document.getElementById('btnBuscar').addEventListener('click',() => {
     buscarPosts(document.getElementById('q').value, document.getElementById('categoria').value);
   });
   buscarPosts();
+
+  // Autocompletado de búsqueda
+  const q = document.getElementById('q');
+  const sugWrap = document.getElementById('sugWrap');
+  const sugList = document.getElementById('sugList');
+  let t = null;
+  async function sugerir(v){
+    if (!v || v.trim().length < 2){ sugWrap.setAttribute('hidden',''); sugList.innerHTML=''; return; }
+    const { data } = await supabase.from('posts').select('slug,titulo').eq('publicado', true).ilike('titulo', `%${v}%`).order('fecha_pub',{ascending:false}).limit(6);
+    sugList.innerHTML = '';
+    (data||[]).forEach(p => {
+      const li = document.createElement('li'); li.className='sug-item';
+      li.innerHTML = `<span class="sug-title">${p.titulo}</span>`;
+      li.addEventListener('click', () => { q.value = p.titulo; sugerir(''); buscarPosts(p.titulo, document.getElementById('categoria').value); });
+      sugList.appendChild(li);
+    });
+    if ((data||[]).length>0) sugWrap.removeAttribute('hidden'); else sugWrap.setAttribute('hidden','');
+  }
+  q.addEventListener('input', () => { clearTimeout(t); t = setTimeout(()=>sugerir(q.value), 200); });
+  q.addEventListener('focus', () => { if (sugList.children.length>0) sugWrap.removeAttribute('hidden'); });
+  q.addEventListener('blur', () => setTimeout(()=>sugWrap.setAttribute('hidden',''), 150));
 </script>
 </body>
 </html>

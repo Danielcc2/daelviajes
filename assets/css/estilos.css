@@ -329,6 +329,59 @@ a:hover {
   gap: 1rem;
 }
 
+/* Filtros de blog (centrado y moderno) */
+.filtros {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: var(--fondo-2);
+  border: 1px solid #1a212c;
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  margin: 1rem auto 1.25rem;
+  max-width: 900px;
+}
+
+.filtros input,
+.filtros select {
+  background: #0f151d;
+  border: 1px solid #1b2431;
+  color: var(--texto);
+  padding: .7rem .8rem;
+  border-radius: .6rem;
+}
+
+.filtros .searchbox {
+  position: relative;
+  min-width: 280px;
+}
+
+.sug-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #0f151d;
+  border: 1px solid #1b2431;
+  border-radius: .6rem;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.sug-list {
+  list-style: none;
+  margin: 0;
+  padding: .25rem 0;
+}
+
+.sug-item {
+  padding: .5rem .75rem;
+  cursor: pointer;
+}
+.sug-item:hover { background: #141a22; }
+
 .card-admin {
   display: block;
   background: var(--fondo-2);
