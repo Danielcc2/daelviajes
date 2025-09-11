@@ -1,0 +1,57 @@
+:root{
+  --fondo:#0f1216; --fondo-2:#12161c; --texto:#e8eef2; --gris:#92a0ad; --acento:#0fdc8b; --error:#ff6b6b; --ok:#59d98b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--fondo);color:var(--texto);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',sans-serif}
+a{color:var(--acento)} a:hover{opacity:.9}
+.contenedor{max-width:1100px;margin:0 auto;padding:0 1rem}
+.sr-only{position:absolute;left:-9999px}
+.header-principal{background:#0b0e12;border-bottom:1px solid #151a21;position:sticky;top:0;z-index:50}
+.header-contenido{display:flex;align-items:center;justify-content:center;gap:1rem;position:relative;padding:.5rem 0}
+.logo{height:48px}
+.nav-principal ul{list-style:none;display:flex;gap:1rem;align-items:center;margin:0;padding:0}
+.nav-principal a{text-decoration:none;color:var(--texto);opacity:.9}
+.nav-cta a{color:#000;background:var(--acento);padding:.4rem .8rem;border-radius:.5rem;font-weight:700}
+.btn-hamburguer{position:absolute;right:1rem;top:.5rem;background:#0e1319;border:1px solid #1b2230;color:var(--texto);font-size:1.5rem;border-radius:.5rem;padding:.25rem .5rem;display:none}
+.menu-movil{display:flex;flex-direction:column;padding:1rem;gap:.8rem;background:#0c1016;border-bottom:1px solid #1a212c}
+.hero{background:linear-gradient(180deg,#0e1318,transparent),radial-gradient(50% 50% at 50% 0%,#12202a 0%,transparent 70%);padding:3rem 1rem;text-align:center}
+.hero h1{font-size:2rem;margin:.3rem 0 1rem}
+.resaltado{color:var(--acento)}
+.auth-form{background:#0e1319;border:1px solid #1a212c;border-radius:12px;max-width:440px;margin:1rem auto;padding:1rem}
+.auth-tabs{display:flex;gap:.5rem;margin-bottom:.75rem}
+.tab{flex:1;background:#0f151d;border:1px solid #1a212c;color:var(--texto);padding:.6rem;border-radius:.6rem;cursor:pointer}
+.tab.activo{background:#12212a;border-color:#1e2a36;outline:2px solid var(--acento)}
+.form-auth{display:flex;flex-direction:column;gap:.6rem}
+.form-auth.oculto{display:none}
+.form-auth input, .form-auth select, .form-auth textarea{background:#0f151d;border:1px solid #1b2431;padding:.8rem;border-radius:.6rem;color:var(--texto)}
+.btn{border:none;border-radius:.6rem;padding:.75rem 1rem;cursor:pointer}
+.btn-primario{background:var(--acento);color:#001b11;font-weight:800}
+.btn-secundario{background:#141a22;border:1px solid #1b2431;color:var(--texto)}
+.btn-link{background:transparent;color:var(--gris);text-decoration:underline}
+.msg{min-height:1.2rem;color:var(--gris)} .msg.error{color:var(--error)} .msg.ok{color:var(--ok)}
+.grid-articulos{display:grid;grid-template-columns:1fr;gap:1rem}
+.tarjeta-articulo{background:var(--fondo-2);border:1px solid #1a212c;border-radius:12px;overflow:hidden}
+.contenido-tarjeta{padding:1rem}
+.categoria{font-size:.8rem;color:var(--acento)}
+.centrado{text-align:center}
+.footer{margin-top:3rem;background:#0b0e12;border-top:1px solid #151a21}
+.footer-contenido{padding:1rem;text-align:center;color:var(--gris)}
+.link-sutil{color:var(--gris)}
+.panel{background:var(--fondo-2);border:1px solid #1a212c;border-radius:12px;padding:1rem;margin:1rem 0}
+.tabla{display:grid;gap:.5rem}
+.grid-admin{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.card-admin{display:block;background:var(--fondo-2);border:1px solid #1a212c;border-radius:12px;padding:1.2rem;text-decoration:none;color:var(--texto)}
+.stats{display:flex;gap:1.5rem;list-style:none;padding-left:0}
+.post-content h1,.post-content h2,.post-content h3{margin-top:1.2rem}
+.post-content p{line-height:1.65}
+.post-content img{max-width:100%;height:auto;border-radius:8px}
+.post-content pre, .post-content code{background:#0e1319;border:1px solid #1a212c;border-radius:8px;padding:.25rem .35rem}
+.lista-comentarios{display:flex;flex-direction:column;gap:.75rem}
+.comentario{background:#0f151d;border:1px solid #1b2431;border-radius:.6rem;padding:.75rem}
+/* Cookie banner */
+.cookie-banner{position:fixed;left:0;right:0;bottom:0;background:#0b0e12;border-top:1px solid #151a21;z-index:9999}
+.cookie-banner .cookie-wrap{display:flex;gap:1rem;align-items:center;justify-content:space-between;padding:.8rem 1rem}
+.cookie-banner p{margin:0;color:var(--gris)}
+.cookie-actions{display:flex;gap:.5rem}
+@media (max-width: 880px){ .nav-principal{display:none} .btn-hamburguer{display:block} .grid-articulos{grid-template-columns:1fr 1fr} }
+@media (max-width: 540px){ .grid-articulos{grid-template-columns:1fr} }

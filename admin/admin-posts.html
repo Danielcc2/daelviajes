@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Admin — Posts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark only" />
+  <link rel="preload" href="../assets/css/estilos.css" as="style">
+  <link rel="stylesheet" href="../assets/css/estilos.css" />
+  <script type="module" src="../assets/js/main.js" defer></script>
+  <script type="module" src="../assets/js/auth.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <header class="header-principal">
+    <div class="contenedor header-contenido">
+      <a class="logo-link" href="../index.html" aria-label="Ir al inicio">
+        <img src="../assets/images/logo.svg" alt="DAEL Viajes" class="logo" />
+      </a>
+      <nav class="nav-principal" aria-label="Principal">
+        <ul>
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="itinerarios.html">Itinerarios</a></li>
+          <li><a href="guias.html">Guías</a></li>
+          <li><a href="reseñas.html">Reseñas</a></li>
+          <li><a href="consejos.html">Consejos</a></li>
+          <li><a href="sobre.html">Sobre mí</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li class="nav-cta"><a href="usuario/perfil.html" id="navCuenta">Mi cuenta</a></li>
+        </ul>
+      </nav>
+      <button class="btn-hamburguer" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú" id="btnHamburguer">☰</button>
+    </div>
+    <nav id="menu-movil" class="menu-movil" hidden>
+      <a href="../index.html">Inicio</a>
+      <a href="../blog.html">Blog</a>
+      <a href="itinerarios.html">Itinerarios</a>
+      <a href="guias.html">Guías</a>
+      <a href="reseñas.html">Reseñas</a>
+      <a href="consejos.html">Consejos</a>
+      <a href="sobre.html">Sobre mí</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="usuario/perfil.html">Mi cuenta</a>
+    </nav>
+  </header>
+
+<main class="contenedor">
+  <h1>Contenido</h1>
+  <form id="formPost" class="form-auth ancho">
+    <div class="uploader">
+      <input type="file" id="imgFile" accept="image/*" />
+      <button class="btn btn-secundario" id="btnSubirImg" type="button">Subir imagen</button>
+      <span id="imgMsg" class="msg"></span>
+    </div>
+    <input name="titulo" placeholder="Título" required />
+    <select name="categoria" required>
+      <option>Guías</option>
+      <option>Itinerarios</option>
+      <option>Reseñas</option>
+      <option>Consejos</option>
+    </select>
+    <textarea name="resumen" rows="4" placeholder="Resumen" required></textarea>
+    <textarea name="contenido" id="mdContenido" rows="12" placeholder="Escribe en Markdown" required></textarea>
+    <div class="panel" id="mdPreview" style="margin-top:.75rem"><em>Vista previa</em><div id="mdOut"></div></div>
+    <button class="btn btn-primario" type="submit">Publicar</button>
+    <div id="msgPost" class="msg"></div>
+  </form>
+  <h2>Listado</h2>
+  <div id="tablaPosts" class="tabla"></div>
+</main>
+  <footer class="footer">
+    <div class="contenedor footer-contenido">
+      <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
+      <nav class="nav-secundario" aria-label="Secundario">
+        <a href="../sobre.html">Sobre mí</a>
+        <a href="../contacto.html">Contacto</a>
+        <a href="../privacidad.html">Privacidad</a>
+        <a href="../cookies.html">Cookies</a>
+        <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/js/cookies.js" defer></script>
+
+<script type="module">
+  import { gestionarPosts } from '../assets/js/admin.js';
+  gestionarPosts();
+</script>
+</body>
+</html>

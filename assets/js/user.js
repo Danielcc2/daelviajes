@@ -1,0 +1,35 @@
+import { supabase } from '../../config/supabase.js';
+export async function inicializarPerfil(){
+  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='index.html'; return; }
+  const favCont = document.getElementById('misFavoritos');
+  if (favCont){
+    const { data } = await supabase.from('favoritos_view').select('slug,titulo,resumen,categoria').order('created_at',{ascending:false});
+    favCont.innerHTML='';
+    (data||[]).forEach(p=>{ const el=document.createElement('article'); el.className='tarjeta-articulo';
+      el.innerHTML = `<div class="contenido-tarjeta"><h3><a href="../post.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p><span class="categoria">${p.categoria??''}</span></div>`;
+      favCont.appendChild(el);
+    });
+  }
+}
+export async function gestionarItinerarios(){
+  const { data: { session } } = await supabase.auth.getSession(); if (!session){ location.href='index.html'; return; }
+  const lista = document.getElementById('misItinerarios'); const form = document.getElementById('formItinerario'); const msg = document.getElementById('msgItin');
+  async function cargar(){ const { data } = await supabase.from('itinerarios_usuario').select('id,titulo,contenido,updated_at').order('updated_at',{ascending:false});
+    lista.innerHTML='';
+    (data||[]).forEach(it => { const el = document.createElement('article'); el.className='tarjeta-articulo';
+      el.innerHTML = `<div class="contenido-tarjeta"><h3>${it.titulo}</h3><pre style="white-space:pre-wrap">${it.contenido}</pre><button class="btn btn-secundario" data-id="${it.id}">Eliminar</button></div>`;
+      lista.appendChild(el); });
+    lista.querySelectorAll('button[data-id]').forEach(btn=>btn.addEventListener('click', async ()=>{ await supabase.from('itinerarios_usuario').delete().eq('id', btn.dataset.id); cargar(); }));
+  }
+  form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const payload = Object.fromEntries(fd.entries());
+    const { error } = await supabase.from('itinerarios_usuario').insert(payload);
+    if (error){ msg.textContent='Error al guardar'; msg.className='msg error'; } else { msg.textContent='Guardado'; msg.className='msg ok'; form.reset(); cargar(); }
+  });
+  cargar();
+}
+export async function listarItinerariosPublicos(){
+  const cont = document.getElementById('listaItinerarios');
+  const { data } = await supabase.from('itinerarios_publicos').select('titulo,resumen,slug').order('fecha_pub',{ascending:false});
+  cont.innerHTML=''; (data||[]).forEach(p=>{ const el=document.createElement('article'); el.className='tarjeta-articulo';
+    el.innerHTML=`<div class="contenido-tarjeta"><h3><a href="../post.html?slug=${p.slug}">${p.titulo}</a></h3><p class="extracto">${p.resumen??''}</p></div>`; cont.appendChild(el); });
+}

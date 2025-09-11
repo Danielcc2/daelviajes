@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Imágenes</title>
+  <link rel="stylesheet" href="../assets/css/estilos.css" />
+  <script type="module" src="../assets/js/admin-media.js" defer></script>
+  <script type="module" src="../assets/js/auth.js" defer></script>
+</head>
+<body>
+  <header class="header-principal">
+    <div class="contenedor header-contenido">
+      <a class="logo-link" href="../index.html" aria-label="Ir al inicio">
+        <img src="../assets/images/logo.svg" alt="DAEL Viajes" class="logo" />
+      </a>
+      <nav class="nav-principal" aria-label="Principal">
+        <ul>
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../admin/admin-dashboard.html">Panel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Gestión de imágenes</h1>
+    <p class="link-sutil">Bucket: <strong>imagenes-posts</strong> (público)</p>
+    <div class="panel">
+      <div class="form-auth">
+        <label>Carpeta</label>
+        <input id="path" value="posts" />
+        <div>
+          <button id="btnListar" class="btn btn-secundario">Listar</button>
+          <button id="btnCrearCarp" class="btn btn-secundario">Crear carpeta</button>
+        </div>
+      </div>
+      <div id="mediaTabla" class="tabla" style="margin-top:1rem"></div>
+      <p class="centrado"><button id="btnMas" class="btn btn-secundario">Cargar más</button></p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor footer-contenido">
+      <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
+      <nav class="nav-secundario" aria-label="Secundario">
+        <a href="../sobre.html">Sobre mí</a>
+        <a href="../contacto.html">Contacto</a>
+        <a href="../privacidad.html">Privacidad</a>
+        <a href="../cookies.html">Cookies</a>
+        <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

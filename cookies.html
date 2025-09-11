@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Cookies — DAEL Viajes</title>
+  <link rel="stylesheet" href="assets/css/estilos.css">
+</head>
+<body>
+  <header class="header-principal">
+    <div class="contenedor header-contenido">
+      <a class="logo-link" href="index.html" aria-label="Ir al inicio">
+        <img src="assets/images/logo.svg" alt="DAEL Viajes" class="logo" />
+      </a>
+      <nav class="nav-principal" aria-label="Principal">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="contenedor">
+    <h1>Política de Cookies</h1>
+    <p class="link-sutil">Última actualización: septiembre de 2025</p>
+    <p>Este sitio utiliza cookies técnicas y de autenticación necesarias. No usamos analítica ni publicidad por defecto.</p>
+    <table class="tabla" style="margin-top:1rem">
+      <tr class="tabla-row tabla-head"><td>Cookie</td><td>Proveedor</td><td>Finalidad</td><td>Duración</td></tr>
+      <tr class="tabla-row"><td>sb-*</td><td>Supabase</td><td>Autenticación (mantener sesión)</td><td>Sesión/persistente</td></tr>
+      <tr class="tabla-row"><td>cookieConsent</td><td>Propia</td><td>Guardar preferencia de cookies</td><td>Hasta que la borres</td></tr>
+    </table>
+    <form id="formPrefs" class="form-auth ancho" style="margin-top:1rem">
+      <label><input type="checkbox" checked disabled> Necesarias</label>
+      <label><input id="ckAnalitica" type="checkbox"> Analítica (desactivada)</label>
+      <button class="btn btn-primario" type="submit">Guardar preferencias</button>
+      <span id="msgPrefs" class="msg"></span>
+    </form>
+  </main>
+  <footer class="footer">
+    <div class="contenedor footer-contenido">
+      <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
+      <nav class="nav-secundario" aria-label="Secundario">
+        <a href="sobre.html">Sobre mí</a>
+        <a href="contacto.html">Contacto</a>
+        <a href="privacidad.html">Privacidad</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
+      </nav>
+    </div>
+  </footer>
+  <script>
+    (function(){
+      const KEY='cookieConsent';
+      const form = document.getElementById('formPrefs');
+      const ana = document.getElementById('ckAnalitica');
+      const msg = document.getElementById('msgPrefs');
+      try {{ const current = JSON.parse(localStorage.getItem(KEY)||'null'); if (current) ana.checked = !!current.analytics; }} catch(e){{}}
+      form.addEventListener('submit', (e)=>{{
+        e.preventDefault();
+        const consent = {{ necessary:true, analytics: !!ana.checked, ts: Date.now() }};
+        localStorage.setItem(KEY, JSON.stringify(consent));
+        msg.textContent='Preferencias guardadas.'; msg.className='msg ok';
+      }});
+    })();
+  </script>
+  <script src="assets/js/cookies.js" defer></script>
+</body>
+</html>
