@@ -13,6 +13,20 @@ create trigger on_auth_user_created after insert on auth.users for each row exec
 create or replace function public.is_admin() returns boolean language sql stable as $$
   select coalesce((select is_admin from public.profiles where id = auth.uid()), false);
 $$;
+-- RLS para profiles (dueño y admin)
+alter table public.profiles enable row level security;
+drop policy if exists profiles_select_self on public.profiles;
+create policy profiles_select_self on public.profiles for select using ( id = auth.uid() );
+drop policy if exists profiles_select_admin on public.profiles;
+create policy profiles_select_admin on public.profiles for select using (
+  exists (select 1 from public.profiles me where me.id = auth.uid() and me.is_admin)
+);
+drop policy if exists profiles_update_self on public.profiles;
+create policy profiles_update_self on public.profiles for update using ( id = auth.uid() ) with check ( id = auth.uid() );
+drop policy if exists profiles_update_admin on public.profiles;
+create policy profiles_update_admin on public.profiles for update using (
+  exists (select 1 from public.profiles me where me.id = auth.uid() and me.is_admin)
+) with check ( true );
 
 -- posts
 create table if not exists public.posts (
