@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Admin — Itinerarios públicos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark only" />
+  <link rel="preload" href="../assets/css/estilos.css" as="style">
+  <link rel="stylesheet" href="../assets/css/estilos.css" />
+  <script type="module" src="../assets/js/main.js" defer></script>
+  <script type="module" src="../assets/js/auth.js" defer></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+  <header class="header-principal">
+    <div class="contenedor header-contenido">
+      <a class="logo-link" href="../index.html" aria-label="Ir al inicio">
+        <img src="../assets/images/logo.png" alt="DAEL Viajes" class="logo" onerror="this.onerror=null;this.src='../assets/images/logo.svg'" />
+      </a>
+      <nav class="nav-principal" aria-label="Principal">
+        <ul>
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../admin/admin-dashboard.html">Panel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Itinerarios públicos</h1>
+    <form id="formItinPub" class="form-auth ancho">
+      <input name="titulo" id="itTitulo" placeholder="Título del itinerario" required />
+      <input name="slug" id="itSlug" placeholder="Slug (opcional, se autogenera)" />
+      <textarea name="resumen" id="itResumen" rows="3" placeholder="Resumen" required></textarea>
+      <div id="itEditor" class="panel" style="padding:0;border:none"></div>
+      <textarea name="contenido" id="itContenido" rows="10" placeholder="Contenido en Markdown" style="display:none"></textarea>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button class="btn btn-primario" id="btnGuardar" type="submit">Publicar</button>
+        <button class="btn btn-secundario" id="btnCancelarEd" type="button" style="display:none">Cancelar edición</button>
+      </div>
+      <div id="msgItinPub" class="msg"></div>
+      <input type="hidden" name="id" id="itinId" />
+    </form>
+    <h2>Listado</h2>
+    <div id="tablaItins" class="tabla"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor footer-contenido">
+      <p>&copy; 2025 DAEL Viajes — Blog de viajes, guías y experiencias.</p>
+      <nav class="nav-secundario" aria-label="Secundario">
+        <a href="../sobre.html">Sobre mí</a>
+        <a href="../contacto.html">Contacto</a>
+        <a href="../privacidad.html">Privacidad</a>
+        <a href="../cookies.html">Cookies</a>
+        <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/js/cookies.js" defer></script>
+  <script type="module">
+    import { gestionarItinsPublicos } from '../assets/js/admin-itins.js';
+    gestionarItinsPublicos();
+  </script>
+</body>
+</html>

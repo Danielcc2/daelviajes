@@ -31,10 +31,43 @@ normalizeInternalLinks();
 const btnHam = document.getElementById('btnHamburguer');
 const menuMovil = document.getElementById('menu-movil');
 if (btnHam && menuMovil){
-  btnHam.addEventListener('click', () => {
+  btnHam.addEventListener('click', async () => {
     const open = !menuMovil.hasAttribute('hidden');
     if (open){ menuMovil.setAttribute('hidden',''); btnHam.setAttribute('aria-expanded','false'); }
-    else { menuMovil.removeAttribute('hidden'); btnHam.setAttribute('aria-expanded','true'); }
+    else {
+      // Actualiza los enlaces de cuenta en el menú móvil
+      const cuentaCont = document.getElementById('menu-movil-cuenta');
+      if (cuentaCont) {
+        cuentaCont.innerHTML = '';
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data?.session) {
+            // Usuario autenticado
+            const a = document.createElement('a');
+            a.href = getSiteBase() + 'usuario/perfil.html';
+            a.textContent = 'Mi cuenta';
+            cuentaCont.appendChild(a);
+          } else {
+            // No autenticado
+            const aLogin = document.createElement('a');
+            aLogin.href = getSiteBase() + 'usuario/login.html';
+            aLogin.textContent = 'Iniciar sesión';
+            cuentaCont.appendChild(aLogin);
+            const aReg = document.createElement('a');
+            aReg.href = getSiteBase() + 'usuario/registro.html';
+            aReg.textContent = 'Registrarse';
+            cuentaCont.appendChild(aReg);
+          }
+        } catch(e) {
+          // Si hay error, mostrar solo login
+          const aLogin = document.createElement('a');
+          aLogin.href = getSiteBase() + 'usuario/login.html';
+          aLogin.textContent = 'Iniciar sesión';
+          cuentaCont.appendChild(aLogin);
+        }
+      }
+      menuMovil.removeAttribute('hidden'); btnHam.setAttribute('aria-expanded','true');
+    }
   });
 }
 // Salir

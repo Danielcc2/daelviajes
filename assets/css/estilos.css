@@ -100,10 +100,41 @@ a:hover {
 .menu-movil {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  gap: .8rem;
-  background: #0c1016;
-  border-bottom: 1px solid #1a212c;
+  padding: 1.5rem 1.2rem;
+  gap: 1.1rem;
+  background: linear-gradient(135deg, #0c1016 80%, var(--acento) 100%);
+  border-radius: 0 0 1.5rem 1.5rem;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 30%);
+  border-bottom: none;
+  animation: menuFadeIn .35s cubic-bezier(.4,1.4,.6,1.0);
+}
+
+@keyframes menuFadeIn {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.menu-movil a {
+  font-size: 1.15rem;
+  color: var(--texto);
+  text-decoration: none;
+  padding: .7rem 1rem;
+  border-radius: .7rem;
+  transition: background .18s, color .18s;
+  font-weight: 600;
+}
+.menu-movil a:hover {
+  background: var(--acento);
+  color: #001b11;
+  box-shadow: 0 2px 12px rgb(15 220 139 / 12%);
+}
+.menu-movil #menu-movil-cuenta a {
+  background: var(--acento);
+  color: #001b11;
+  margin-top: .5rem;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgb(15 220 139 / 18%);
+}
 }
 
 /* Respetar el atributo [hidden] para el menú móvil */
