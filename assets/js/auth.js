@@ -82,8 +82,6 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
   };
   
   updateAuthUI(!!data?.session, data?.session?.user);
-    }
-  }
 })();
 const btnRec = document.getElementById('btnRecuperar');
 if (btnRec){
