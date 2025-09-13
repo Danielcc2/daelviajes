@@ -4,6 +4,7 @@
   <title>Itinerario — DAEL Viajes</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="assets/js/include-html.js" defer></script>
   <meta name="color-scheme" content="dark only" />
   <link rel="preload" href="assets/css/estilos.css" as="style">
   <link rel="stylesheet" href="assets/css/estilos.css" />
@@ -33,17 +34,7 @@
       </nav>
       <button class="btn-hamburguer" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú" id="btnHamburguer">☰</button>
     </div>
-    <nav id="menu-movil" class="menu-movil" hidden>
-      <a href="index.html">Inicio</a>
-      <a href="blog.html">Blog</a>
-      <a href="itinerarios.html">Itinerarios</a>
-      <a href="guias.html">Guías</a>
-      <a href="reseñas.html">Reseñas</a>
-      <a href="consejos.html">Consejos</a>
-      <a href="sobre.html">Sobre mí</a>
-      <a href="contacto.html">Contacto</a>
-      <a href="usuario/perfil.html">Mi cuenta</a>
-    </nav>
+    <div id="header-container"></div>
   </header>
 
   <main class="contenedor">
@@ -65,7 +56,7 @@
         <a href="#" id="btnSalir" class="link-sutil">Cerrar sesión</a>
       </nav>
     </div>
-  </footer>
+  <div id="footer-container"></div>
   <script src="assets/js/cookies.js" defer></script>
 </body>
 </html>
