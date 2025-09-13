@@ -31,23 +31,57 @@ if (formRegistro){ formRegistro.addEventListener('submit', async (e)=>{
 (async () => {
   const { data } = await supabase.auth.getSession();
   const navCuenta = document.getElementById('navCuenta');
-  if (navCuenta){
-    if (data?.session){
-      navCuenta.textContent = data.session.user.email.split('@')[0];
-      navCuenta.href = getSiteBase() + 'usuario/perfil.html';
-      // Si existe un enlace de registro añadido dinámicamente, lo ocultamos
-      const reg = document.getElementById('navRegistro'); if (reg) reg.remove();
-    } else {
-      navCuenta.textContent = 'Iniciar sesión';
-      navCuenta.href = getSiteBase() + 'usuario/login.html';
-      // Añadir enlace de registro junto al botón de cuenta
-      const li = navCuenta.closest('li');
-      if (li && !document.getElementById('navRegistro')){
-        const regLi = document.createElement('li');
-        const a = document.createElement('a'); a.id = 'navRegistro'; a.href = getSiteBase() + 'usuario/registro.html'; a.textContent = 'Crear cuenta';
-        regLi.appendChild(a);
-        li.parentElement?.insertBefore(regLi, li.nextSibling);
+  const menuMovilCuenta = document.getElementById('menu-movil-cuenta');
+  
+  const updateAuthUI = (isLoggedIn, user) => {
+    const siteBase = getSiteBase();
+    
+    // Actualizar nav principal
+    if (navCuenta) {
+      if (isLoggedIn) {
+        navCuenta.textContent = user.email.split('@')[0];
+        navCuenta.href = siteBase + 'usuario/perfil.html';
+        const reg = document.getElementById('navRegistro');
+        if (reg) reg.remove();
+      } else {
+        navCuenta.textContent = 'Iniciar sesión';
+        navCuenta.href = siteBase + 'usuario/login.html';
+        const li = navCuenta.closest('li');
+        if (li && !document.getElementById('navRegistro')) {
+          const regLi = document.createElement('li');
+          const a = document.createElement('a');
+          a.id = 'navRegistro';
+          a.href = siteBase + 'usuario/registro.html';
+          a.textContent = 'Crear cuenta';
+          regLi.appendChild(a);
+          li.parentElement?.insertBefore(regLi, li.nextSibling);
+        }
       }
+    }
+    
+    // Actualizar menú móvil
+    if (menuMovilCuenta) {
+      menuMovilCuenta.innerHTML = isLoggedIn ? `
+        <a href="${siteBase}usuario/perfil.html">
+          <span class="material-icons">account_circle</span>
+          ${user.email.split('@')[0]}
+        </a>
+        <a href="${siteBase}usuario/mis-itinerarios.html">
+          <span class="material-icons">map</span>
+          Mis itinerarios
+        </a>` : `
+        <a href="${siteBase}usuario/login.html">
+          <span class="material-icons">login</span>
+          Iniciar sesión
+        </a>
+        <a href="${siteBase}usuario/registro.html">
+          <span class="material-icons">person_add</span>
+          Crear cuenta
+        </a>`;
+    }
+  };
+  
+  updateAuthUI(!!data?.session, data?.session?.user);
     }
   }
 })();

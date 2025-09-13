@@ -1,3 +1,4 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <header class="header-principal">
   <div class="contenedor header-contenido">
     <a class="logo-link" href="index.html" aria-label="Ir al inicio">
@@ -19,14 +20,22 @@
     <button class="btn-hamburguer" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú" id="btnHamburguer">☰</button>
   </div>
   <nav id="menu-movil" class="menu-movil" hidden>
-    <a href="index.html">Inicio</a>
-    <a href="blog.html">Blog</a>
-    <a href="itinerarios.html">Itinerarios</a>
-    <a href="guias.html">Guías</a>
-    <a href="reseñas.html">Reseñas</a>
-    <a href="consejos.html">Consejos</a>
-    <a href="sobre.html">Sobre mí</a>
-    <a href="contacto.html">Contacto</a>
-    <span id="menu-movil-cuenta"></span>
+    <div class="menu-section">
+      <a href="index.html">Inicio</a>
+      <a href="blog.html">Blog</a>
+      <a href="itinerarios.html">Itinerarios</a>
+    </div>
+    <div class="menu-section">
+      <a href="guias.html">Guías</a>
+      <a href="reseñas.html">Reseñas</a>
+      <a href="consejos.html">Consejos</a>
+    </div>
+    <div class="menu-section">
+      <a href="sobre.html">Sobre mí</a>
+      <a href="contacto.html">Contacto</a>
+    </div>
+    <div class="menu-section menu-auth" id="menu-movil-cuenta">
+      <!-- Aquí se insertarán dinámicamente las opciones de autenticación -->
+    </div>
   </nav>
 </header>
